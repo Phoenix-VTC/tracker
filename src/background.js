@@ -7,6 +7,7 @@ import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const config = require('electron-cfg')
 const axios = require('axios').default
+const RichPresenceManager = require('./RichPresenceManager')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -69,6 +70,9 @@ app.on('ready', async () => {
     updateUserData()
 
     createWindow()
+
+    const presenceManager = new RichPresenceManager()
+    presenceManager.init()
 })
 
 // Exit cleanly on request from parent process in development mode.
