@@ -1,6 +1,17 @@
 {
-  "name": "tracker",
-  "version": "0.1.0",
+  "name": "phoenix-tracker",
+  "productName": "Phoenix Tracker",
+  "description": "An ETS2 and ATS job logger for PhoenixVTC",
+  "homepage": "https://phoenixvtc.com",
+  "author": {
+    "name": "Diego",
+    "email": "diego@phoenixvtc.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Phoenix-VTC/tracker.git"
+  },
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
