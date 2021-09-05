@@ -4,7 +4,7 @@ const DiscordRPC = require('discord-rpc')
 const tst = require("trucksim-telemetry")
 
 const config = require('electron-cfg')
-const configFile = require('./config')
+const configFile = require('../config')
 
 const util = require('util');
 

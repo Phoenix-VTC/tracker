@@ -7,8 +7,8 @@ import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const config = require('electron-cfg')
 const axios = require('axios').default
-const RichPresenceManager = require('./RichPresenceManager')
-const TelemetryManager = require('./TelemetryManager')
+const RichPresenceManager = require('./managers/RichPresenceManager')
+const TelemetryManager = require('./managers/TelemetryManager')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
