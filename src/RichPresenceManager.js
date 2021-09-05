@@ -328,7 +328,7 @@ class RichPresenceManager {
         }
 
         activity.buttons = [
-            {'label': 'View Profile', 'url': `https://base.phoenixvtc.com/users/${config.get('user').truckersmp_id}`},
+            {'label': 'View Profile', 'url': `https://base.phoenixvtc.com/users/${config.get('user').id}`},
             {'label': 'Learn More', 'url': 'https://phoenixvtc.com'}
         ]
 
