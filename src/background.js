@@ -8,6 +8,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const config = require('electron-cfg')
 const axios = require('axios').default
 const RichPresenceManager = require('./RichPresenceManager')
+const TelemetryManager = require('./TelemetryManager')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -71,6 +72,9 @@ app.on('ready', async () => {
     updateUserData()
 
     createWindow()
+
+    const telemetryManager = new TelemetryManager()
+    telemetryManager.init()
 
     const presenceManager = new RichPresenceManager()
     presenceManager.init()
