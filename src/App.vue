@@ -5,13 +5,25 @@
       <div class="mt-10 mb-10">
         <a href="#">
           <img :src="this.user.profile_picture ?? 'https://i.imgur.com/qw6JoIu.png'"
-               class="rounded-full w-10 h-10 mb-3 mx-auto" alt="Diego"/>
+               class="rounded-full w-10 h-10 mb-3 mx-auto" :alt="this.user.username"/>
         </a>
         <div class="mt-10">
-          <ul>
-            <li class="mb-6">
+          <ul class="space-y-8">
+            <li>
               <router-link to="/">
                 <HomeIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/">
+                <TruckIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/">
+                <CalendarIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
               </router-link>
             </li>
           </ul>
@@ -30,12 +42,15 @@
 </template>
 
 <script>
-import { HomeIcon, CogIcon } from '@heroicons/vue/outline'
+import {HomeIcon, TruckIcon, CalendarIcon, CogIcon} from '@heroicons/vue/outline'
+
 const config = require('electron-cfg');
 
 export default {
   components: {
     HomeIcon,
+    TruckIcon,
+    CalendarIcon,
     CogIcon
   },
 
