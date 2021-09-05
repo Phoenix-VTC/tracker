@@ -287,7 +287,7 @@ class RichPresenceManager {
         activity.startTimestamp = this.timestamp;
 
         if (data.job.income > 0) {
-            if (data.job.source.city.name !== null) {
+            if (!data.job.isSpecial) {
                 activity.details += `🚚 ${data.job.source.city.name} > ${data.job.destination.city.name} | ${data.truck.make.name} ${data.truck.model.name}`;
             } else {
                 activity.details += `🚧 Special Transport | ${data.truck.make.name} ${data.truck.model.name}`
