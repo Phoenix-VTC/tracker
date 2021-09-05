@@ -286,9 +286,6 @@ class RichPresenceManager {
         activity.state = '';
         activity.startTimestamp = this.timestamp;
 
-        ray('Job:')
-        ray(data.job)
-
         if (data.job.income > 0) {
             if (data.job.source.city.name !== null) {
                 activity.details += `🚚 ${data.job.source.city.name} > ${data.job.destination.city.name} | ${data.truck.make.name} ${data.truck.model.name}`;
@@ -390,81 +387,6 @@ class RichPresenceManager {
             })
         }
     }
-
-    // init() {
-    //     console.log('RPC Manager')
-    //
-    //     rpc.on('ready', () => {
-    //         rpc.setActivity({
-    //             details: 'Game not running',
-    //             startTimestamp,
-    //             largeImageKey: 'logo_bg',
-    //             buttons: [
-    //                 {'label': 'Learn More', 'url': 'https://phoenixvtc.com'},
-    //                 {'label': 'View Profile', 'url': 'https://base.phoenixvtc.com/users/1'}
-    //             ]
-    //         })
-    //
-    //         this.handleUpdates()
-    //     })
-    // }
-
-    // handleUpdates() {
-    //     telemetry.game.on("connected", function () {
-    //         rpc.setActivity({
-    //             details: `🚛 Freeroaming`,
-    //             startTimestamp,
-    //             largeImageKey: 'logo_bg',
-    //             buttons: [
-    //                 {'label': 'Learn More', 'url': 'https://phoenixvtc.com'},
-    //                 {'label': 'View Profile', 'url': 'https://base.phoenixvtc.com/users/1'}
-    //             ]
-    //         })
-    //     })
-    //
-    //     telemetry.game.on("time-change", function () {
-    //         const data = tst.getData()
-    //
-    //         checkMpInfo()
-    //
-    //         rpc.setActivity({
-    //             details: `🚛 Freeroaming | ${data.truck.brand.name} ${data.truck.model.name}`,
-    //             startTimestamp,
-    //             largeImageKey: 'logo_bg',
-    //             buttons: [
-    //                 {'label': 'Learn More', 'url': 'https://phoenixvtc.com'},
-    //                 {'label': 'View Profile', 'url': 'https://base.phoenixvtc.com/users/1'}
-    //             ]
-    //         })
-    //     })
-    //
-    //     // Start watching the game for changes
-    //     // ALWAYS at the bottom of the event listeners
-    //     telemetry.watch()
-    //
-    //     function checkMpInfo() {
-    //         // const info = {};
-    //         const id = config.get('user').truckersmp_id
-    //
-    //         axios.get(`https://api.truckyapp.com/v2/map/onlineList?ids=${id}`).then((response) => {
-    //             // Return if response is empty
-    //             if (!response) {
-    //                 return
-    //             }
-    //
-    //             const data = response.data;
-    //
-    //             if (!data.response.players[0].online) {
-    //                 console.log('OFFLINE');
-    //             } else {
-    //                 console.log('ONLINE')
-    //             }
-    //
-    //             // Update the user data
-    //             config.set('user', response.data)
-    //         })
-    //     }
-    // }
 }
 
 module.exports = RichPresenceManager;
