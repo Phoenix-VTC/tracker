@@ -22,6 +22,7 @@ async function createWindow() {
         height: 600,
         title: 'Phoenix Tracker',
         icon: 'src/assets/icon.ico',
+        backgroundColor: '#161e2e',
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
