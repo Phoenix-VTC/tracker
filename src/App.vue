@@ -36,13 +36,32 @@
       </div>
     </nav>
     <div class="text-gray-700 bg-gray-200 h-screen w-screen">
+
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4" v-if="Object.keys(this.user).length === 0">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <ExclamationIcon class="h-5 w-5 text-yellow-400"/>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-700">
+              You currently aren't logged in.
+              <router-link to="/settings" class="font-medium underline text-yellow-700 hover:text-yellow-600">
+                Connect your tracker token.
+              </router-link>
+            </p>
+          </div>
+        </div>
+      </div>
+
       <router-view/>
+
     </div>
   </div>
 </template>
 
 <script>
 import {HomeIcon, TruckIcon, CalendarIcon, CogIcon} from '@heroicons/vue/outline'
+import {ExclamationIcon} from '@heroicons/vue/solid'
 
 const config = require('electron-cfg');
 
@@ -51,7 +70,8 @@ export default {
     HomeIcon,
     TruckIcon,
     CalendarIcon,
-    CogIcon
+    CogIcon,
+    ExclamationIcon
   },
 
   data() {
