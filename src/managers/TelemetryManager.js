@@ -40,7 +40,7 @@ class TelemetryManager {
 
             axios.post('http://base.test/api/tracker', JSON.stringify(data), {
                 headers: {
-                    'Authorization': `Bearer ${Buffer.from(config.get('tracker-token')).toString('base64')}`
+                    'Authorization': `Bearer ${config.get('tracker-token')}`
                 }
             }).catch(function (error) {
                 console.log(error)
