@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, Tray, Menu, Notification, nativeImage} from 'electron'
+import {app, protocol, BrowserWindow, Tray, Menu, Notification, nativeImage, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 
@@ -135,7 +135,7 @@ app.on('ready', async () => {
         }
     }
 
-    updateUserData()
+    await updateUserData()
 
     // mainWindow = createWindow();
 
@@ -164,7 +164,7 @@ if (isDevelopment) {
 function updateUserData() {
     const token = config.get('tracker-token')
 
-    axios.get('http://base.test/api/user', {
+    axios.get(`${getApiEndpointUrl()}/user`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -181,4 +181,27 @@ function updateUserData() {
         // Update the user data
         config.set('user', response.data)
     })
+}
+
+ipcMain.on('get-api-endpoint-url', (event) => {
+    event.returnValue = getApiEndpointUrl();
+})
+
+function getApiEndpointUrl() {
+    let apiEndpointUrl = '';
+
+    const endpoint = config.get('api-endpoint', 'production');
+
+    switch (endpoint) {
+        case 'staging':
+            apiEndpointUrl = 'https://base-staging.phoenixvtc.com';
+            break;
+        case 'local':
+            apiEndpointUrl = 'http://base.test';
+            break;
+        default:
+            apiEndpointUrl = 'https://base.phoenixvtc.com'
+    }
+
+    return apiEndpointUrl + '/api';
 }

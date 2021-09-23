@@ -1,8 +1,10 @@
-const tst = require("trucksim-telemetry")
+const tst = require('trucksim-telemetry')
 
 const config = require('electron-cfg')
 
 const axios = require('axios').default
+
+const endpointUrl = getApiEndpointUrl()
 
 class TelemetryManager {
     constructor() {
@@ -38,7 +40,7 @@ class TelemetryManager {
         function sendData() {
             const data = tst.getData()
 
-            axios.post('http://base.test/api/tracker', JSON.stringify(data), {
+            axios.post(`${endpointUrl}/tracker`, JSON.stringify(data), {
                 headers: {
                     'Authorization': `Bearer ${config.get('tracker-token')}`
                 }
@@ -47,6 +49,25 @@ class TelemetryManager {
             })
         }
     }
+}
+
+function getApiEndpointUrl() {
+    let apiEndpointUrl = '';
+
+    const endpoint = config.get('api-endpoint', 'production');
+
+    switch (endpoint) {
+        case 'staging':
+            apiEndpointUrl = 'https://base-staging.phoenixvtc.com';
+            break;
+        case 'local':
+            apiEndpointUrl = 'http://base.test';
+            break;
+        default:
+            apiEndpointUrl = 'https://base.phoenixvtc.com'
+    }
+
+    return apiEndpointUrl + '/api';
 }
 
 module.exports = TelemetryManager;

@@ -328,7 +328,7 @@ class RichPresenceManager {
         }
 
         activity.buttons = [
-            {'label': 'View Profile', 'url': `https://base.phoenixvtc.com/users/${config.get('user').id}`},
+            {'label': 'View Profile', 'url': `${getBaseUrl()}/users/${config.get('user').id}`},
             {'label': 'Learn More', 'url': 'https://phoenixvtc.com'}
         ]
 
@@ -382,11 +382,30 @@ class RichPresenceManager {
                 largeImageKey: 'logo_bg',
                 buttons: [
                     {'label': 'Learn More', 'url': 'https://phoenixvtc.com'},
-                    {'label': 'View Profile', 'url': 'https://base.phoenixvtc.com/users/1'}
+                    {'label': 'View Profile', 'url': `${getBaseUrl()}/users/${config.get('user').id}`}
                 ]
             })
         }
     }
+}
+
+function getBaseUrl() {
+    let apiEndpointUrl = '';
+
+    const endpoint = config.get('api-endpoint', 'production');
+
+    switch (endpoint) {
+        case 'staging':
+            apiEndpointUrl = 'https://base-staging.phoenixvtc.com';
+            break;
+        case 'local':
+            apiEndpointUrl = 'http://base.test';
+            break;
+        default:
+            apiEndpointUrl = 'https://base.phoenixvtc.com'
+    }
+
+    return apiEndpointUrl;
 }
 
 module.exports = RichPresenceManager;

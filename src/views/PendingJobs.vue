@@ -132,7 +132,7 @@ export default {
   mounted: function () {
     this.token = config.get('tracker-token')
 
-    this.axios.get('http://base.test/api/tracker/jobs', {
+    this.axios.get(`${this.$apiEndpointUrl}/tracker/jobs`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
       }

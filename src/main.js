@@ -4,5 +4,10 @@ import router from './router'
 import './assets/index.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import {ipcRenderer} from 'electron'
 
-createApp(App).use(router).use(VueAxios, axios).mount('#app')
+const app = createApp(App)
+
+app.config.globalProperties.$apiEndpointUrl = ipcRenderer.sendSync('get-api-endpoint-url')
+
+app.use(router).use(VueAxios, axios).mount('#app')

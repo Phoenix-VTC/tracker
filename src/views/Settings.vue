@@ -61,6 +61,40 @@
               </div>
             </settings-section>
 
+            <settings-section title="Developer Settings" description="Don't touch this unless you know what you're doing.">
+              <fieldset>
+                <div>
+                  <legend class="text-base font-medium text-gray-900">API Endpoint</legend>
+                  <p class="text-sm text-gray-500">Where the tracker data will be requested from/sent to.</p>
+                </div>
+                <div class="mt-4 space-y-4">
+                  <div class="flex items-center">
+                    <input id="production" name="api-endpoint" type="radio" value="production" v-model="apiEndpoint"
+                           class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
+                    <label for="production" class="ml-3 block text-sm font-medium text-gray-700">
+                      Production
+                    </label>
+                  </div>
+
+                  <div class="flex items-center">
+                    <input id="staging" name="api-endpoint" type="radio" value="staging" v-model="apiEndpoint"
+                           class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
+                    <label for="staging" class="ml-3 block text-sm font-medium text-gray-700">
+                      Staging
+                    </label>
+                  </div>
+
+                  <div class="flex items-center">
+                    <input id="local" name="api-endpoint" type="radio" value="local" v-model="apiEndpoint"
+                           class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
+                    <label for="local" class="ml-3 block text-sm font-medium text-gray-700">
+                      Local
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+            </settings-section>
+
             <div class="flex justify-end">
               <button type="submit"
                       class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -95,7 +129,8 @@ export default {
     return {
       errors: [],
       token: config.get('tracker-token'),
-      tokenInputType: 'password'
+      tokenInputType: 'password',
+      apiEndpoint: config.get('api-endpoint', 'production'),
     }
   },
 
@@ -111,7 +146,7 @@ export default {
         e.preventDefault();
 
         // Make a request to the API
-        this.axios.get('http://base.test/api/user', {
+        this.axios.get(`${this.$apiEndpointUrl}/user`, {
           headers: {
             'Authorization': `Bearer ${this.token}`
           }
@@ -139,13 +174,17 @@ export default {
           // Save the user data
           config.set('user', response.data);
 
-          new Notification('Token Saved', {
-            body: 'The tracker token has been saved!'
-          });
-
           location.reload();
         })
       }
+
+      if (this.apiEndpoint !== config.get('api-endpoint')) {
+        config.set('api-endpoint', this.apiEndpoint);
+      }
+
+      new Notification('Settings saved', {
+        body: 'Your settings have been saved!'
+      });
     },
 
     toggleTokenDisplay() {
