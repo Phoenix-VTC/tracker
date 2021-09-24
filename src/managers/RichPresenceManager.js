@@ -34,6 +34,10 @@ class RichPresenceManager {
     }
 
     init() {
+        if (config.get('enable-discord-rpc', true) === false) {
+            return;
+        }
+
         this.bindETCarsEvents()
         this.telemetry.watch()
 

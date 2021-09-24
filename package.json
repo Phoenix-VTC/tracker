@@ -24,6 +24,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@headlessui/vue": "^1.4.1",
     "@heroicons/vue": "^1.0.4",
     "@tailwindcss/forms": "^0.3.3",
     "autoprefixer": "^9.8.6",
