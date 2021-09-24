@@ -26,7 +26,6 @@ class RichPresenceManager {
         this.lastData = null
         this.rpcReady = false
         this.rpcOnChangingState = false
-        this.mpCheckerInterval = null
         this.locationCheckerInterval = null
         this.locationInfo = null
 
@@ -48,13 +47,11 @@ class RichPresenceManager {
         ray('Bind Start')
         const instance = this;
 
-        this.telemetry.game.on('time-change', function () {
-            ray('time change')
-            console.log('time change')
+        function update(data) {
+            ray('update!')
+            console.log('update!')
             //use a try / catch as sometimes the data isn't there when first connecting...plus it's json parsing...
             try {
-                const data = tst.getData()
-
                 // putting apart last data received
                 instance.lastData = data;
 
@@ -73,7 +70,7 @@ class RichPresenceManager {
 
                         instance.timestamp = Date.now()
 
-                        if (!instance.checkIfMultiplayer(data)) {
+                        if (instance.mpInfo && !instance.mpInfo.online) {
                             instance.startLocationChecker();
                         }
 
@@ -93,11 +90,8 @@ class RichPresenceManager {
 
                 if (instance.rpcReady) {
                     // checking if playing in multiplayer and loading online state, server and position
-                    console.log(instance.checkIfMultiplayer())
-                    if (instance.checkIfMultiplayer() && instance.mpInfo == null && !instance.TRUCKYERROR) {
-                        console.log('pass')
+                    if (!instance.TRUCKYERROR) {
                         instance.startMPChecker();
-                        instance.checkMpInfo();
                     }
 
                     const activity = instance.buildActivity(data);
@@ -111,7 +105,7 @@ class RichPresenceManager {
             } catch (error) {
                 console.log(error);
             }
-        });
+        }
 
         this.telemetry.game.on('connect', function () {
             console.log('Connected to game')
@@ -124,15 +118,15 @@ class RichPresenceManager {
             instance.resetMPChecker();
             instance.resetLocationChecker();
         });
+
+        this.telemetry.watch({interval: 5000}, update)
     }
 
     startMPChecker() {
-        if (this.mpCheckerInterval == null) {
-            const instance = this;
-            this.mpCheckerInterval = setInterval(() => {
-                instance.checkMpInfo()
-            }, this.mpCheckerIntervalTime);
-        }
+        const instance = this;
+        this.mpCheckerInterval = setInterval(() => {
+            instance.checkMpInfo()
+        }, 50000); // TODO: Change to 10000
     }
 
     startLocationChecker() {
@@ -171,26 +165,10 @@ class RichPresenceManager {
         }
     }
 
-    // TODO: Fix
-    // Currently all RPC multiplayer functionality is broken
-    checkIfMultiplayer() {
-        axios.get(`https://traffic.krashnz.com/api/v2/user/${config.get('user').truckersmp_id}`).then((response) => {
-            response = response.data
-
-            if (response.error) {
-                return false
-            }
-
-            console.log(response.response.online)
-            return response.response.online
-        })
-    }
-
     checkMpInfo() {
         const instance = this;
 
-        if (this.lastData != null && this.checkIfMultiplayer(this.lastData)) {
-
+        if (this.lastData != null) {
             console.log('Checking online status');
 
             const url = util.format('https://api.truckyapp.com/v2/map/onlineList?ids=%s', config.get('user').truckersmp_id);
@@ -227,6 +205,8 @@ class RichPresenceManager {
                         };
                         instance.TRUCKYERROR = false;
                     }
+
+                    ray(instance.mpInfo);
                 } else {
                     instance.mpInfo = null;
                     instance.TRUCKYERROR = true;
@@ -297,14 +277,14 @@ class RichPresenceManager {
                 activity.details += `🚧 Special Transport | ${data.truck.make.name} ${data.truck.model.name}`
             }
         } else {
-            if (this.gameLoading) {
-                activity.details += `🕗 Loading game...`
+            if (data.game.paused) {
+                activity.details += `🕗 Game paused`
             } else {
                 activity.details += `🚛 Freeroaming | ${data.truck.make.name} ${data.truck.model.name}`;
             }
         }
 
-        if (!this.gameLoading && data.truck.engine.enabled === true) {
+        if (!data.game.paused && data.truck.engine.enabled === true) {
             activity.details += util.format(` at ${this.calculateSpeed(speed, this.isAts(data))}${this.getSpeedUnit(this.isAts(data))}`);
         }
 
