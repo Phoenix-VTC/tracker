@@ -9,9 +9,6 @@ const configFile = require('../config')
 const util = require('util');
 
 const fetch = require('electron-fetch').default
-const axios = require('axios').default
-
-const ray = require('node-ray').ray
 
 class RichPresenceManager {
     constructor() {
@@ -19,8 +16,6 @@ class RichPresenceManager {
 
         // setting initial variables state
         this.rpc = null;
-        this.mpCheckerIntervalTime = configFile.mpCheckerIntervalMilliseconds;
-        this.locationCheckerIntervalTime = configFile.locationCheckerIntervalMilliseconds;
 
         this.mpInfo = null
         this.lastData = null
@@ -28,38 +23,24 @@ class RichPresenceManager {
         this.rpcOnChangingState = false
         this.locationCheckerInterval = null
         this.locationInfo = null
-
-        ray('Construct')
     }
 
     init() {
+        // Return if Discord RPC is disabled
+        // TODO: Also return null if the connected user doesn't have a truckersmp_id to prevent errors
         if (config.get('enable-discord-rpc', true) === false) {
             return;
         }
 
-        this.bindETCarsEvents()
-        this.telemetry.watch()
-
-        ray('Init')
-    }
-
-    bindETCarsEvents() {
-        ray('Bind Start')
         const instance = this;
 
         function update(data) {
-            ray('update!')
-            console.log('update!')
-            //use a try / catch as sometimes the data isn't there when first connecting...plus it's json parsing...
+            // Use a try / catch as sometimes the data isn't there when first connecting. Also because of JSON parsing
             try {
-                // putting apart last data received
+                // Set apart the last data received
                 instance.lastData = data;
 
-                ray(data.truck.position.X)
-
-                // telemetry exists
-
-                // begin to initialize Discord RPC
+                // Begin to initialize Discord RPC
                 // checking if is in valid state
                 if (!instance.rpcOnChangingState) {
 
@@ -71,7 +52,7 @@ class RichPresenceManager {
                         instance.timestamp = Date.now()
 
                         if (instance.mpInfo && !instance.mpInfo.online) {
-                            instance.startLocationChecker();
+                            instance.checkLocationInfo();
                         }
 
                         // creating a new Discord RPC Client instance
@@ -91,52 +72,33 @@ class RichPresenceManager {
                 if (instance.rpcReady) {
                     // checking if playing in multiplayer and loading online state, server and position
                     if (!instance.TRUCKYERROR) {
-                        instance.startMPChecker();
+                        instance.checkMpInfo();
                     }
 
                     const activity = instance.buildActivity(data);
-
-                    ray(activity)
 
                     if (activity != null) {
                         instance.rpc.setActivity(activity);
                     }
                 }
             } catch (error) {
+                // TODO: Find better way to log errors
                 console.log(error);
             }
         }
 
+        // TODO: Remove
         this.telemetry.game.on('connect', function () {
             console.log('Connected to game')
         });
 
-        //TODO: Check for alternative
+        // TODO: Is this event actually being sent?
         this.telemetry.game.on('disconnect', function () {
             instance.resetETCarsData();
             instance.resetRPCClient();
-            instance.resetMPChecker();
-            instance.resetLocationChecker();
         });
 
         this.telemetry.watch({interval: 5000}, update)
-    }
-
-    startMPChecker() {
-        const instance = this;
-        this.mpCheckerInterval = setInterval(() => {
-            instance.checkMpInfo()
-        }, 50000); // TODO: Change to 10000
-    }
-
-    startLocationChecker() {
-        if (this.locationCheckerInterval == null) {
-            const instance = this;
-            this.locationCheckerInterval = setInterval(() => {
-                instance.checkLocationInfo()
-            }, this.locationCheckerIntervalTime);
-            console.log('Starting Location Checker interval');
-        }
     }
 
     resetETCarsData() {
@@ -146,31 +108,10 @@ class RichPresenceManager {
         this.locationInfo = null;
     }
 
-    resetMPChecker() {
-        if (this.mpCheckerInterval != null) {
-            clearInterval(this.mpCheckerInterval);
-            this.mpCheckerInterval = null;
-            this.mpInfo = null;
-            this.locationInfo = null;
-            console.log('MP Checker interval reset');
-        }
-    }
-
-    resetLocationChecker() {
-        if (this.locationCheckerInterval != null) {
-            clearInterval(this.locationCheckerInterval);
-            this.locationCheckerInterval = null;
-            this.locationInfo = null;
-            console.log('Location Checker interval reset');
-        }
-    }
-
     checkMpInfo() {
         const instance = this;
 
         if (this.lastData != null) {
-            console.log('Checking online status');
-
             const url = util.format('https://api.truckyapp.com/v2/map/onlineList?ids=%s', config.get('user').truckersmp_id);
 
             fetch(url).then((body) => {
@@ -205,14 +146,11 @@ class RichPresenceManager {
                         };
                         instance.TRUCKYERROR = false;
                     }
-
-                    ray(instance.mpInfo);
                 } else {
                     instance.mpInfo = null;
                     instance.TRUCKYERROR = true;
+                    // TODO: Find better way to log errors
                     console.log('Trucky API is currently having issues - MP Checker has been stopped.');
-                    instance.resetMPChecker();
-                    instance.resetLocationChecker();
                 }
             });
         }
@@ -229,7 +167,6 @@ class RichPresenceManager {
         } else {
             const url = util.format('https://api.truckyapp.com/v2/map/%s/resolve?x=%s&y=%s', this.lastData.game.game.name, this.lastData.truck.position.X, this.lastData.truck.position.Z);
 
-            //console.log(url);
             fetch(url).then((body) => {
                 return body.json()
             }).then((json) => {
@@ -291,7 +228,7 @@ class RichPresenceManager {
         activity.largeImageText = 'Phoenix Tracker';
         activity.largeImageKey = 'logo_bg';
 
-        if (this.mpInfo != null && this.mpInfo.online !== false) {
+        if (this.mpInfo != null && this.mpInfo.online) {
             activity.state += util.format('🌐 %s', this.mpInfo.server.name);
             activity.largeImageText += util.format(' | ID: %s', this.mpInfo.playerid)
         } else {
@@ -320,8 +257,6 @@ class RichPresenceManager {
     }
 
     isAts(data) {
-        ray(`Game ID: ${data.game.game.name}`)
-
         return data.game.game.name === configFile.constants.ats;
     }
 
@@ -373,6 +308,7 @@ class RichPresenceManager {
     }
 }
 
+// TODO: Convert to ipcRenderer.sendSync('get-phoenixbase-url')
 function getBaseUrl() {
     let apiEndpointUrl = '';
 
