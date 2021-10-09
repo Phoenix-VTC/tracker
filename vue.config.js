@@ -5,7 +5,12 @@ module.exports = {
             mainProcessWatch: ['src/managers/RichPresenceManager.js', 'src/managers/TelemetryManager.js'],
             builderOptions: {
                 productName: 'Phoenix Tracker',
-                appId: 'com.phoenixvtc.tracker'
+                appId: 'com.phoenixvtc.tracker',
+                nsis: {
+                    oneClick: false,
+                    perMachine: true,
+                    menuCategory: true,
+                },
             }
         }
     }
