@@ -22,7 +22,7 @@
             </li>
 
             <li>
-              <router-link to="/">
+              <router-link to="/events">
                 <CalendarIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
               </router-link>
             </li>

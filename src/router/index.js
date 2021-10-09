@@ -4,17 +4,22 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
+    component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue'),
   },
   {
     path: '/pending-jobs',
     name: 'Pending Jobs',
-    component: () => import(/* webpackChunkName: "about" */ '../views/PendingJobs.vue'),
+    component: () => import(/* webpackChunkName: "pending-jobs" */ '../views/PendingJobs.vue'),
+  },
+  {
+    path: '/events',
+    name: 'Events',
+    component: () => import(/* webpackChunkName: "events" */ '../views/Events.vue'),
   },
   {
     path: '/settings',
     name: 'Settings',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Settings.vue'),
+    component: () => import(/* webpackChunkName: "settings" */ '../views/Settings.vue'),
   }
 ]
 
