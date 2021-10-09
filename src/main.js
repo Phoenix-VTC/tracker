@@ -10,4 +10,6 @@ const app = createApp(App)
 
 app.config.globalProperties.$apiEndpointUrl = ipcRenderer.sendSync('get-api-endpoint-url')
 
+app.config.globalProperties.$phoenixBaseUrl = ipcRenderer.sendSync('get-phoenixbase-url')
+
 app.use(router).use(VueAxios, axios).mount('#app')

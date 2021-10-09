@@ -68,7 +68,7 @@
                       </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a href="#" class="text-indigo-600 hover:text-indigo-900">Verify</a>
+                      <a :href="`${phoenixBaseUrl}/jobs/${job.id}/verify`" target="_blank" class="text-indigo-600 hover:text-indigo-900">Verify</a>
                     </td>
                   </tr>
                   </tbody>
@@ -125,7 +125,8 @@ export default {
     return {
       token: null,
       jobsLoaded: false,
-      jobs: []
+      jobs: [],
+      phoenixBaseUrl: this.$phoenixBaseUrl
     }
   },
 
