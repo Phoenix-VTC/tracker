@@ -1,6 +1,18 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, Tray, Menu, Notification, nativeImage, ipcMain} from 'electron'
+import {
+    app,
+    protocol,
+    BrowserWindow,
+    Tray,
+    Menu,
+    MenuItem,
+    Notification,
+    nativeImage,
+    ipcMain,
+    dialog,
+    shell
+} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 
@@ -10,6 +22,12 @@ const axios = require('axios').default
 const RichPresenceManager = require('./managers/RichPresenceManager')
 const TelemetryManager = require('./managers/TelemetryManager')
 const path = require('path')
+require('@electron/remote/main').initialize()
+import defaultMenu from 'electron-default-menu';
+
+const {download} = require('electron-dl');
+
+const ray = require('node-ray').ray // TODO: TEMP
 
 let mainWindow
 
@@ -65,7 +83,70 @@ function createWindow() {
         win.loadURL('app://./index.html')
     }
 
+    // Create the application menu
+    createApplicationMenu();
+
+    // Open target="_blank" links in default browser instead of a new window in the Electron app
+    win.webContents.on('new-window', function (e, url) {
+        e.preventDefault();
+        require('electron').shell.openExternal(url);
+    });
+
     return win;
+}
+
+function createApplicationMenu() {
+    // Get default menu template
+    const menu = defaultMenu(app, shell);
+
+    // Add settings menu
+    menu.splice(3, 0, new MenuItem(
+        {
+            label: 'Settings',
+            submenu: [
+                {
+                    label: '(Re)install Telemetry',
+                    submenu: [
+                        {
+                            label: 'Euro Truck Simulator 2',
+                            click() {
+                                installEtsTelemetry();
+                            }
+                        },
+                        {
+                            label: 'American Truck Simulator',
+                            click() {
+                                installAtsTelemetry();
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ))
+
+    // Replace help menu
+    menu.splice(4, 1, new MenuItem(
+        {
+            label: 'Help',
+            submenu: [
+                {
+                    label: 'PhoenixBase',
+                    click() {
+                        shell.openExternal('https://base.phoenixvtc.com')
+                    }
+                },
+                {
+                    label: 'Phoenix Discord',
+                    click() {
+                        shell.openExternal('https://discord.gg/PhoenixVTC')
+                    }
+                }
+            ]
+        }
+    ))
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
 function createTray() {
@@ -164,7 +245,7 @@ if (isDevelopment) {
 function updateUserData() {
     const token = config.get('tracker-token')
 
-    axios.get(`${getApiEndpointUrl()}/user`, {
+    axios.get(`${getEndpointUrl(true)}/user`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -184,24 +265,96 @@ function updateUserData() {
 }
 
 ipcMain.on('get-api-endpoint-url', (event) => {
-    event.returnValue = getApiEndpointUrl();
+    event.returnValue = getEndpointUrl(true);
 })
 
-function getApiEndpointUrl() {
-    let apiEndpointUrl = '';
+ipcMain.on('get-phoenixbase-url', (event) => {
+    event.returnValue = getEndpointUrl();
+})
+
+function getEndpointUrl(api = false) {
+    let endpointUrl = '';
 
     const endpoint = config.get('api-endpoint', 'production');
 
     switch (endpoint) {
         case 'staging':
-            apiEndpointUrl = 'https://base-staging.phoenixvtc.com';
+            endpointUrl = 'https://base-staging.phoenixvtc.com';
             break;
         case 'local':
-            apiEndpointUrl = 'http://base.test';
+            endpointUrl = 'http://base.test';
             break;
         default:
-            apiEndpointUrl = 'https://base.phoenixvtc.com'
+            endpointUrl = 'https://base.phoenixvtc.com'
     }
 
-    return apiEndpointUrl + '/api';
+    if (api) {
+        return endpointUrl + '/api';
+    }
+
+    return endpointUrl;
+}
+
+function installEtsTelemetry() {
+    dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        title: 'Tracker Setup',
+        message: 'Do you want to (re)install the tracker telemetry for ETS2?',
+        buttons: ['Yes', 'No'],
+        defaultId: 1,
+    }).then(res => {
+        // Set the ETS directory to null if the 2nd button was clicked
+        if (res.response === 1) {
+            config.set('ets2-directory', null)
+        } else {
+            dialog.showOpenDialog({properties: ['openDirectory'], title: 'ETS2 game path'}).then(res => {
+                let path = res.filePaths[0] + '/bin';
+
+                if (path !== undefined) {
+                    installTelemetry(path, 'ETS2')
+                }
+            })
+        }
+    });
+}
+
+function installAtsTelemetry() {
+    dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        title: 'Tracker Setup',
+        message: 'Do you want to (re)install the tracker telemetry for ATS?',
+        buttons: ['Yes', 'No'],
+        defaultId: 1,
+    }).then(res => {
+        // Set the ATS directory to null if the 2nd button was clicked
+        if (res.response === 1) {
+            config.set('ats-directory', null)
+        } else {
+            dialog.showOpenDialog({properties: ['openDirectory'], title: 'ATS game path'}).then(res => {
+                let path = res.filePaths[0] + '/bin';
+
+                if (res.filePaths[0] !== undefined) {
+                    installTelemetry(path, 'ATS')
+                }
+            })
+        }
+    });
+}
+
+function installTelemetry(path, game) {
+    download(mainWindow, 'https://github.com/Phoenix-VTC/scs-sdk/raw/main/Win32/scs-telemetry.dll', {
+        directory: `${path}/win_x86/plugins`,
+        overwrite: true,
+    }).then(() => {
+        download(mainWindow, 'https://github.com/Phoenix-VTC/scs-sdk/raw/main/Win64/scs-telemetry.dll', {
+            directory: `${path}/win_x64/plugins`,
+            overwrite: true,
+        }).then(() => {
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Success!',
+                message: `${game} telemetry installed successfully.`,
+            })
+        })
+    })
 }
