@@ -32,6 +32,8 @@ class InstallationManager {
 
         // Return if they don't
         if (startSetup.response === 1) {
+            config.set('installation-completed', true);
+
             return;
         }
 
