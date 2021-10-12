@@ -2,7 +2,7 @@ module.exports = {
     pluginOptions: {
         electronBuilder: {
             nodeIntegration: true,
-            mainProcessWatch: ['src/managers/RichPresenceManager.js', 'src/managers/TelemetryManager.js'],
+            mainProcessWatch: ['src/managers/RichPresenceManager.js', 'src/managers/TelemetryManager.js', 'src/managers/InstallationManager.js'],
             builderOptions: {
                 productName: 'Phoenix Tracker',
                 appId: 'com.phoenixvtc.tracker',
@@ -11,6 +11,15 @@ module.exports = {
                     perMachine: true,
                     menuCategory: true,
                 },
+                extraResources: [
+                    {
+                        from: "node_modules/regedit/vbs",
+                        to: "regedit/vbs",
+                        filter: [
+                            "**/*"
+                        ]
+                    }
+                ]
             }
         }
     }

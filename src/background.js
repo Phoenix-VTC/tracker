@@ -10,8 +10,7 @@ import {
     Notification,
     nativeImage,
     ipcMain,
-    dialog,
-    shell
+    shell,
 } from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
@@ -21,11 +20,11 @@ const config = require('electron-cfg')
 const axios = require('axios').default
 const RichPresenceManager = require('./managers/RichPresenceManager')
 const TelemetryManager = require('./managers/TelemetryManager')
+const InstallationManager = require('./managers/InstallationManager')
+const installationManager = new InstallationManager()
 const path = require('path')
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
-
-const {download} = require('electron-dl');
 
 const ray = require('node-ray').ray // TODO: TEMP
 
@@ -86,6 +85,9 @@ function createWindow() {
     // Create the application menu
     createApplicationMenu();
 
+    // Start the installation manager
+    installationManager.init(win)
+
     // Open target="_blank" links in default browser instead of a new window in the Electron app
     win.webContents.on('new-window', function (e, url) {
         e.preventDefault();
@@ -105,18 +107,30 @@ function createApplicationMenu() {
             label: 'Settings',
             submenu: [
                 {
-                    label: '(Re)install Telemetry',
+                    label: 'Reset installation status',
+                    click() {
+                        installationManager.resetInstallationStatus(mainWindow);
+                    }
+                },
+                {
+                    label: 'Change game paths',
                     submenu: [
+                        {
+                            label: 'TruckersMP',
+                            click() {
+                                installationManager.changeTruckersMpPath(mainWindow);
+                            }
+                        },
                         {
                             label: 'Euro Truck Simulator 2',
                             click() {
-                                installEtsTelemetry();
+                                installationManager.changeEts2Path(mainWindow);
                             }
                         },
                         {
                             label: 'American Truck Simulator',
                             click() {
-                                installAtsTelemetry();
+                                installationManager.changeAtsPath(mainWindow);
                             }
                         }
                     ]
@@ -218,8 +232,6 @@ app.on('ready', async () => {
 
     await updateUserData()
 
-    // mainWindow = createWindow();
-
     const telemetryManager = new TelemetryManager()
     telemetryManager.init()
 
@@ -293,68 +305,4 @@ function getEndpointUrl(api = false) {
     }
 
     return endpointUrl;
-}
-
-function installEtsTelemetry() {
-    dialog.showMessageBox(mainWindow, {
-        type: 'question',
-        title: 'Tracker Setup',
-        message: 'Do you want to (re)install the tracker telemetry for ETS2?',
-        buttons: ['Yes', 'No'],
-        defaultId: 1,
-    }).then(res => {
-        // Set the ETS directory to null if the 2nd button was clicked
-        if (res.response === 1) {
-            config.set('ets2-directory', null)
-        } else {
-            dialog.showOpenDialog({properties: ['openDirectory'], title: 'ETS2 game path'}).then(res => {
-                let path = res.filePaths[0] + '/bin';
-
-                if (path !== undefined) {
-                    installTelemetry(path, 'ETS2')
-                }
-            })
-        }
-    });
-}
-
-function installAtsTelemetry() {
-    dialog.showMessageBox(mainWindow, {
-        type: 'question',
-        title: 'Tracker Setup',
-        message: 'Do you want to (re)install the tracker telemetry for ATS?',
-        buttons: ['Yes', 'No'],
-        defaultId: 1,
-    }).then(res => {
-        // Set the ATS directory to null if the 2nd button was clicked
-        if (res.response === 1) {
-            config.set('ats-directory', null)
-        } else {
-            dialog.showOpenDialog({properties: ['openDirectory'], title: 'ATS game path'}).then(res => {
-                let path = res.filePaths[0] + '/bin';
-
-                if (res.filePaths[0] !== undefined) {
-                    installTelemetry(path, 'ATS')
-                }
-            })
-        }
-    });
-}
-
-function installTelemetry(path, game) {
-    download(mainWindow, 'https://github.com/Phoenix-VTC/scs-sdk/raw/main/Win32/scs-telemetry.dll', {
-        directory: `${path}/win_x86/plugins`,
-        overwrite: true,
-    }).then(() => {
-        download(mainWindow, 'https://github.com/Phoenix-VTC/scs-sdk/raw/main/Win64/scs-telemetry.dll', {
-            directory: `${path}/win_x64/plugins`,
-            overwrite: true,
-        }).then(() => {
-            dialog.showMessageBox({
-                type: 'info',
-                title: 'Success!',
-                message: `${game} telemetry installed successfully.`,
-            })
-        })
-    })
 }
