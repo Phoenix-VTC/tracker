@@ -202,7 +202,7 @@ export default {
             'Authorization': `Bearer ${this.token}`
           }
         }).catch(function (error) {
-          if (error.response.status === 402) {
+          if (error.response.status === 401) {
             // Return incorrect tracker token notification if the status is 401
             new Notification('Incorrect tracker token!', {
               body: `Please try again. Error code: ${error.response.status}`
@@ -213,6 +213,8 @@ export default {
               body: `Error code: ${error.response.status}`
             })
           }
+
+          return;
         }).then((response) => {
           // Return if response is empty
           if (!response) {
@@ -226,7 +228,15 @@ export default {
           config.set('user', response.data);
 
           location.reload();
+
+          new Notification('Successfully authenticated!', {
+            body: 'Tracker token added successfully.'
+          });
         })
+      } else {
+        new Notification('Settings saved', {
+          body: 'Your settings have been saved!'
+        });
       }
 
       if (this.apiEndpoint !== config.get('api-endpoint')) {
@@ -236,10 +246,6 @@ export default {
       if (this.enableDiscordRpc !== config.get('enable-discord-rpc')) {
         config.set('enable-discord-rpc', this.enableDiscordRpc);
       }
-
-      new Notification('Settings saved', {
-        body: 'Your settings have been saved!'
-      });
     },
 
     toggleTokenDisplay() {

@@ -44,10 +44,8 @@
           </div>
           <div class="ml-3">
             <p class="text-sm text-yellow-700">
-              You currently aren't logged in.
-              <router-link to="/settings" class="font-medium underline text-yellow-700 hover:text-yellow-600">
-                Connect your tracker token.
-              </router-link>
+              <b>You currently aren't logged in.</b>
+              Please connect your tracker token.
             </p>
           </div>
         </div>

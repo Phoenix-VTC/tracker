@@ -137,6 +137,19 @@ export default {
       headers: {
         'Authorization': `Bearer ${this.token}`
       }
+    }).catch(function (error) {
+      // Clear user data & reload page if unauthorized
+      if (error.response.status === 401) {
+        config.delete('tracker-token')
+        config.delete('user')
+
+        location.reload();
+      } else {
+        // Else return a generic error notification
+        new Notification('Something went wrong while trying to load your pending jobs.', {
+          body: `Error code: ${error.response.status}`
+        })
+      }
     }).then((response) => {
       this.jobsLoaded = true;
       this.jobs = response.data;
