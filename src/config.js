@@ -31,6 +31,7 @@ module.exports = {
         'scania',
         'skoda',
         'volvo',
-        'tesla'
+        'tesla',
+        'patron',
     ]
 }
