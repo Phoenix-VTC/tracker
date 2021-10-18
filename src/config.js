@@ -33,5 +33,6 @@ module.exports = {
         'volvo',
         'tesla',
         'patron',
+        'ai',
     ]
 }
