@@ -38,8 +38,8 @@ protocol.registerSchemesAsPrivileged([
 function createWindow() {
     // Create the browser window.
     let win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1220,
+        height: 780,
         title: 'Phoenix Tracker',
         icon: 'src/assets/icons/icon_256.ico',
         backgroundColor: '#161e2e',
