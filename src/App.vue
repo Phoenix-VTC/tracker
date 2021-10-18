@@ -4,7 +4,7 @@
     <nav class="bg-gray-900 w-20  justify-between flex flex-col ">
       <div class="mt-10 mb-10">
         <a href="#">
-          <img :src="this.user.profile_picture ?? 'https://i.imgur.com/qw6JoIu.png'"
+          <img :src="this.user.profile_picture ?? 'https://tracker-resources.s3.fr-par.scw.cloud/default_profile_picture.png'"
                class="rounded-full w-10 h-10 mb-3 mx-auto" :alt="this.user.username"/>
         </a>
         <div class="mt-10">
