@@ -26,11 +26,25 @@ class RichPresenceManager {
     }
 
     init() {
+        // TODO: Remove
+        this.telemetry.game.on('connected', function () {
+            console.log('Connected to game')
+        });
+
+        // TODO: Is this event actually being sent?
+        this.telemetry.game.on('disconnected', function () {
+            console.log('Disconnected!')
+            instance.resetETCarsData();
+            instance.resetRPCClient();
+        });
+
         // Return if Discord RPC is disabled
         // TODO: Also return null if the connected user doesn't have a truckersmp_id to prevent errors
         if (config.get('enable-discord-rpc', true) === false) {
             return;
         }
+
+        this.telemetry.watch({interval: 5000}, update)
 
         const instance = this;
 
@@ -86,19 +100,6 @@ class RichPresenceManager {
                 console.log(error);
             }
         }
-
-        // TODO: Remove
-        this.telemetry.game.on('connect', function () {
-            console.log('Connected to game')
-        });
-
-        // TODO: Is this event actually being sent?
-        this.telemetry.game.on('disconnect', function () {
-            instance.resetETCarsData();
-            instance.resetRPCClient();
-        });
-
-        this.telemetry.watch({interval: 5000}, update)
     }
 
     resetETCarsData() {
