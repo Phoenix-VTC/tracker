@@ -24,12 +24,12 @@
               </router-link>
             </li>
 
-            <li>
-              <router-link to="/events" class="text-gray-300 hover:text-gray-100"
-                           active-class="text-orange-500 hover:text-orange-500">
-                <CalendarIcon class="h-6 w-6 mx-auto"/>
-              </router-link>
-            </li>
+<!--            <li>-->
+<!--              <router-link to="/events" class="text-gray-300 hover:text-gray-100"-->
+<!--                           active-class="text-orange-500 hover:text-orange-500">-->
+<!--                <CalendarIcon class="h-6 w-6 mx-auto"/>-->
+<!--              </router-link>-->
+<!--            </li>-->
           </ul>
         </div>
       </div>
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import {HomeIcon, TruckIcon, CalendarIcon, CogIcon} from '@heroicons/vue/outline'
+import {HomeIcon, TruckIcon, CogIcon} from '@heroicons/vue/outline'
 import {ExclamationIcon} from '@heroicons/vue/solid'
 
 const config = require('electron-cfg');
@@ -72,7 +72,6 @@ export default {
   components: {
     HomeIcon,
     TruckIcon,
-    CalendarIcon,
     CogIcon,
     ExclamationIcon
   },
