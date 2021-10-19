@@ -4,34 +4,39 @@
     <nav class="bg-gray-900 w-20  justify-between flex flex-col ">
       <div class="mt-10 mb-10">
         <a href="#">
-          <img :src="this.user.profile_picture ?? 'https://tracker-resources.s3.fr-par.scw.cloud/default_profile_picture.png'"
-               class="rounded-full w-10 h-10 mb-3 mx-auto" :alt="this.user.username"/>
+          <img
+              :src="this.user.profile_picture ?? 'https://tracker-resources.s3.fr-par.scw.cloud/default_profile_picture.png'"
+              class="rounded-full w-10 h-10 mb-3 mx-auto" :alt="this.user.username"/>
         </a>
         <div class="mt-10">
           <ul class="space-y-8">
             <li>
-              <router-link to="/">
-                <HomeIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
+              <router-link to="/" class="text-gray-300 hover:text-gray-100"
+                           active-class="text-orange-500 hover:text-orange-500">
+                <HomeIcon class="h-6 w-6 mx-auto"/>
               </router-link>
             </li>
 
             <li>
-              <router-link to="/pending-jobs">
-                <TruckIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
+              <router-link to="/pending-jobs" class="text-gray-300 hover:text-gray-100"
+                           active-class="text-orange-500 hover:text-orange-500">
+                <TruckIcon class="h-6 w-6 mx-auto"/>
               </router-link>
             </li>
 
             <li>
-              <router-link to="/events">
-                <CalendarIcon class="h-6 w-6 text-gray-300 mx-auto hover:text-orange-500"/>
+              <router-link to="/events" class="text-gray-300 hover:text-gray-100"
+                           active-class="text-orange-500 hover:text-orange-500">
+                <CalendarIcon class="h-6 w-6 mx-auto"/>
               </router-link>
             </li>
           </ul>
         </div>
       </div>
       <div class="mb-4">
-        <router-link to="/settings">
-          <CogIcon class="h-5 w-5 text-gray-300 mx-auto hover:text-orange-500"/>
+        <router-link to="/settings" class="text-gray-300 hover:text-gray-100"
+                     active-class="text-orange-500 hover:text-orange-500">
+          <CogIcon class="h-5 w-5 mx-auto"/>
         </router-link>
       </div>
     </nav>
