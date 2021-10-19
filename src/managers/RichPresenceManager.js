@@ -26,62 +26,54 @@ class RichPresenceManager {
     }
 
     init() {
-        // TODO: Remove
-        this.telemetry.game.on('connected', function () {
-            console.log('Connected to game')
-        });
+        const instance = this;
 
-        // TODO: Is this event actually being sent?
-        this.telemetry.game.on('disconnected', function () {
-            console.log('Disconnected!')
-            instance.resetETCarsData();
-            instance.resetRPCClient();
-        });
-
-        // Return if Discord RPC is disabled
-        // TODO: Also return null if the connected user doesn't have a truckersmp_id to prevent errors
-        if (config.get('enable-discord-rpc', true) === false) {
+        // Return if the connected user doesn't have a TruckersMP ID
+        if (typeof config.get('user').truckersmp_id === 'undefined') {
             return;
         }
 
+        this.telemetry.game.on('disconnected', function () {
+            instance.resetTelemetryData();
+            instance.resetRPCClient();
+        });
+
         this.telemetry.watch({interval: 5000}, update)
 
-        const instance = this;
+        // Begin to initialize Discord RPC
+        // checking if is in valid state
+        if (!instance.rpcOnChangingState) {
+
+            // checking if is not ready
+            if (!instance.rpcReady) {
+
+                instance.rpcOnChangingState = true;
+
+                instance.timestamp = Date.now()
+
+                if (instance.mpInfo && !instance.mpInfo.online) {
+                    instance.checkLocationInfo();
+                }
+
+                // creating a new Discord RPC Client instance
+                instance.rpc = new DiscordRPC.Client({
+                    transport: 'ipc'
+                })
+
+                // login to RPC
+                instance.rpc.login({clientId: clientId}).then(() => {
+                    // cleaning up variables to save RPC Client state
+                    instance.rpcReady = true;
+                    instance.rpcOnChangingState = false;
+                }).catch(console.error);
+            }
+        }
 
         function update(data) {
             // Use a try / catch as sometimes the data isn't there when first connecting. Also because of JSON parsing
             try {
                 // Set apart the last data received
                 instance.lastData = data;
-
-                // Begin to initialize Discord RPC
-                // checking if is in valid state
-                if (!instance.rpcOnChangingState) {
-
-                    // checking if is not ready
-                    if (!instance.rpcReady) {
-
-                        instance.rpcOnChangingState = true;
-
-                        instance.timestamp = Date.now()
-
-                        if (instance.mpInfo && !instance.mpInfo.online) {
-                            instance.checkLocationInfo();
-                        }
-
-                        // creating a new Discord RPC Client instance
-                        instance.rpc = new DiscordRPC.Client({
-                            transport: 'ipc'
-                        })
-
-                        // login to RPC
-                        instance.rpc.login({clientId: clientId}).then(() => {
-                            // cleaning up variables to save RPC Client state
-                            instance.rpcReady = true;
-                            instance.rpcOnChangingState = false;
-                        }).catch(console.error);
-                    }
-                }
 
                 if (instance.rpcReady) {
                     // checking if playing in multiplayer and loading online state, server and position
@@ -100,9 +92,21 @@ class RichPresenceManager {
                 console.log(error);
             }
         }
+
+        // Check if game is running (outputting data)
+        // If not, display the game not running RPC status & clear the telemetry data.
+        setInterval(function () {
+            const data = tst.getData()
+
+            if (data === null) {
+                instance.resetTelemetryData();
+                instance.resetRPCClient();
+            }
+
+        }, 10000);
     }
 
-    resetETCarsData() {
+    resetTelemetryData() {
         this.lastData = null;
         this.mpInfo = null;
         this.mpStatsInfo = null;
@@ -191,6 +195,11 @@ class RichPresenceManager {
 
     buildActivity(data) {
         let activity = {};
+
+        if (config.get('enable-discord-rpc', true) === false) {
+            this.rpc.clearActivity();
+            return;
+        }
 
         this.gameLoading = data.truck.brand.name === false;
 
@@ -295,17 +304,24 @@ class RichPresenceManager {
     }
 
     resetRPCClient() {
-        if (this.rpc != null) {
-            this.rpc.setActivity({
-                details: 'Game not running',
-                startTimestamp: this.timestamp,
-                largeImageKey: 'logo_bg',
-                buttons: [
-                    {'label': 'Learn More', 'url': 'https://phoenixvtc.com'},
-                    {'label': 'View Profile', 'url': `${getBaseUrl()}/users/${config.get('user').id}`}
-                ]
-            })
+        if (config.get('enable-game-not-running-discord-rpc', true) === false) {
+            this.rpc.clearActivity();
+            return;
         }
+
+        if (this.rpc === null) {
+            return;
+        }
+
+        this.rpc.setActivity({
+            details: 'Game not running',
+            startTimestamp: this.timestamp,
+            largeImageKey: 'logo_bg',
+            buttons: [
+                {'label': 'View Profile', 'url': `${getBaseUrl()}/users/${config.get('user').id}`},
+                {'label': 'Learn More', 'url': 'https://phoenixvtc.com'}
+            ]
+        })
     }
 }
 
