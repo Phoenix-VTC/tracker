@@ -12,8 +12,6 @@ class TelemetryManager {
     }
 
     init() {
-        console.log('Telemetry Manager')
-
         this.telemetry.job.on('started', function () {
             sendData()
         })

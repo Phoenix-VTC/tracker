@@ -19,7 +19,14 @@ module.exports = {
                             "**/*"
                         ]
                     }
-                ]
+                ],
+                publish: {
+                    provider: "s3",
+                    bucket: "phoenixvtc-tracker-updates",
+                    region: "nl-ams",
+                    acl: "public-read",
+                    endpoint: "https://phoenixvtc-tracker-updates.s3.nl-ams.scw.cloud",
+                }
             }
         }
     }

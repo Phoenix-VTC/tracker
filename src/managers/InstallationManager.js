@@ -4,7 +4,7 @@ const {app, dialog} = require('electron');
 
 class InstallationManager {
     constructor() {
-        console.log('Installation Manager')
+        //
     }
 
     async init(mainWindow) {

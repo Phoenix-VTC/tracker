@@ -19,6 +19,7 @@
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
+    "electron:publish": "vue-cli-service electron:build -p always",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
@@ -37,6 +38,7 @@
     "electron-default-menu": "^1.0.2",
     "electron-dl": "github:sindresorhus/electron-dl#main",
     "electron-fetch": "^1.7.4",
+    "electron-updater": "^4.3.9",
     "node-ray": "^1.16.0",
     "nodejs-file-downloader": "^4.7.4",
     "postcss": "^7.0.36",

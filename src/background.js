@@ -25,8 +25,7 @@ const installationManager = new InstallationManager()
 const path = require('path')
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
-
-const ray = require('node-ray').ray // TODO: TEMP
+import { autoUpdater } from 'electron-updater';
 
 let mainWindow
 
@@ -80,6 +79,8 @@ function createWindow() {
         createProtocol('app')
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
+
+        autoUpdater.checkForUpdatesAndNotify()
     }
 
     // Create the application menu
