@@ -126,35 +126,50 @@ export default {
       token: null,
       jobsLoaded: false,
       jobs: [],
-      phoenixBaseUrl: this.$phoenixBaseUrl
+      phoenixBaseUrl: this.$phoenixBaseUrl,
+      interval: null,
+    }
+  },
+
+  methods: {
+    loadData: function () {
+      this.token = config.get('tracker-token')
+
+      this.axios.get(`${this.$apiEndpointUrl}/tracker/jobs`, {
+        headers: {
+          'Authorization': `Bearer ${this.token}`
+        }
+      }).catch(function (error) {
+        // Clear user data & reload page if unauthorized
+        if (error.response.status === 401) {
+          config.delete('tracker-token')
+          config.delete('user')
+
+          location.reload();
+        } else {
+          // Else return a generic error notification
+          new Notification('Something went wrong while trying to load your pending jobs.', {
+            body: `Error code: ${error.response.status}`
+          })
+        }
+      }).then((response) => {
+        this.jobsLoaded = true;
+        this.jobs = response.data;
+      });
     }
   },
 
   mounted: function () {
-    this.token = config.get('tracker-token')
+    this.loadData();
 
-    this.axios.get(`${this.$apiEndpointUrl}/tracker/jobs`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    }).catch(function (error) {
-      // Clear user data & reload page if unauthorized
-      if (error.response.status === 401) {
-        config.delete('tracker-token')
-        config.delete('user')
-
-        location.reload();
-      } else {
-        // Else return a generic error notification
-        new Notification('Something went wrong while trying to load your pending jobs.', {
-          body: `Error code: ${error.response.status}`
-        })
-      }
-    }).then((response) => {
-      this.jobsLoaded = true;
-      this.jobs = response.data;
-    });
+    this.interval = setInterval(function () {
+      this.loadData();
+    }.bind(this), 15000);
   },
+
+  beforeUnmount: function(){
+    clearInterval(this.interval);
+  }
 }
 </script>
 
