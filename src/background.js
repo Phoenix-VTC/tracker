@@ -19,7 +19,7 @@ const RichPresenceManager = require('./managers/RichPresenceManager')
 const TelemetryManager = require('./managers/TelemetryManager')
 const InstallationManager = require('./managers/InstallationManager')
 const installationManager = new InstallationManager()
-const path = require('path')
+const AutoLaunch = require('auto-launch');
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
 import {autoUpdater} from 'electron-updater';
@@ -279,3 +279,32 @@ ipcMain.on('launch-ats', (event) => {
 function launchGame(executablePath) {
     spawn(executablePath, {detached: true});
 }
+
+const autoLauncher = new AutoLaunch({
+    name: 'Phoenix Tracker',
+    isHidden: true,
+});
+
+ipcMain.on('toggle-start-on-boot', (event) => {
+    autoLauncher.isEnabled()
+        .then(function (isEnabled) {
+            if (isEnabled) {
+                autoLauncher.disable();
+
+                return;
+            }
+            autoLauncher.enable();
+        })
+        .catch(function (err) {
+            console.log(err)
+        });
+
+    event.returnValue = true;
+})
+
+ipcMain.on('starts-on-boot', (event) => {
+    autoLauncher.isEnabled()
+        .then(function (isEnabled) {
+            event.returnValue = isEnabled;
+        });
+})
