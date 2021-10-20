@@ -4,11 +4,8 @@ import {
     app,
     protocol,
     BrowserWindow,
-    Tray,
     Menu,
     MenuItem,
-    Notification,
-    nativeImage,
     ipcMain,
     shell,
 } from 'electron'
@@ -50,27 +47,6 @@ function createWindow() {
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
         }
     })
-
-    let tray = null;
-
-    win.on('minimize', function (event) {
-        event.preventDefault();
-
-        win.setSkipTaskbar(true);
-
-        tray = createTray();
-
-        new Notification({
-            title: 'Phoenix Tracker minimized to tray',
-            body: 'Double-click or right-click the icon to restore the window.'
-        }).show()
-    });
-
-    win.on('restore', function () {
-        win.show();
-        win.setSkipTaskbar(false);
-        tray.destroy();
-    });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
@@ -163,41 +139,6 @@ function createApplicationMenu() {
     ))
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-}
-
-function createTray() {
-
-    let appIcon = new Tray(path.join(__static, 'favicon.ico'));
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Phoenix Tracker',
-            icon: nativeImage.createFromPath(path.join(__static, 'favicon.ico')).resize({width: 16}),
-            enabled: false,
-        },
-        {
-            type: 'separator',
-        },
-        {
-            label: 'Show Tracker', click: function () {
-                mainWindow.show();
-            }
-        },
-        {
-            label: 'Quit', click: function () {
-                app.isQuiting = true;
-                app.quit();
-            }
-        }
-    ]);
-
-    appIcon.on('double-click', function () {
-        mainWindow.show();
-    });
-
-    appIcon.setToolTip('Phoenix Tracker');
-    appIcon.setContextMenu(contextMenu);
-
-    return appIcon;
 }
 
 app.whenReady().then(() => {
