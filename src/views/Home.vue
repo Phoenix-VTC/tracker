@@ -57,19 +57,19 @@
                 </div>
               </div>
             </div>
-            <!--            <div-->
-            <!--                class="border-t border-gray-200 grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-y-0 sm:divide-x bg-white rounded-b-lg">-->
-            <!--              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100">-->
-            <!--                <span class="text-orange-600">Launch Euro Truck Simulator 2</span>-->
-            <!--              </button>-->
-            <!--              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100">-->
-            <!--                <span class="text-orange-600">Launch TruckersMP</span>-->
-            <!--              </button>-->
+            <div
+                class="border-t border-gray-200 grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-y-0 sm:divide-x bg-white rounded-b-lg">
+              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100" v-on:click="launchEts2">
+                <span class="text-orange-600">Launch Euro Truck Simulator 2</span>
+              </button>
+              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100" v-on:click="launchTruckersmp">
+                <span class="text-orange-600">Launch TruckersMP</span>
+              </button>
 
-            <!--              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100">-->
-            <!--                <span class="text-orange-600">Launch American Truck Simulator</span>-->
-            <!--              </button>-->
-            <!--            </div>-->
+              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100" v-on:click="launchAts">
+                <span class="text-orange-600">Launch American Truck Simulator</span>
+              </button>
+            </div>
           </div>
         </section>
       </div>
@@ -79,6 +79,7 @@
 
 <script>
 import truckSimTelemetry from "trucksim-telemetry"
+import {ipcRenderer} from 'electron'
 
 const config = require('electron-cfg');
 
@@ -118,7 +119,19 @@ export default {
       } else if (id === 2) {
         return 'American Truck Simulator'
       }
-    }
+    },
+
+    launchEts2() {
+      ipcRenderer.sendSync('launch-ets2');
+    },
+
+    launchTruckersmp() {
+      ipcRenderer.sendSync('launch-truckersmp');
+    },
+
+    launchAts() {
+      ipcRenderer.sendSync('launch-ats');
+    },
   },
 
   mounted: function () {

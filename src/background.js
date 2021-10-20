@@ -25,7 +25,8 @@ const installationManager = new InstallationManager()
 const path = require('path')
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
-import { autoUpdater } from 'electron-updater';
+import {autoUpdater} from 'electron-updater';
+import {spawn} from 'child_process';
 
 let mainWindow
 
@@ -306,4 +307,34 @@ function getEndpointUrl(api = false) {
     }
 
     return endpointUrl;
+}
+
+ipcMain.on('launch-ets2', (event) => {
+    if (process.arch === 'x64') {
+        launchGame(`${config.get('ets2-path')}\\bin\\win_x64\\eurotrucks2.exe`);
+    } else {
+        launchGame(`${config.get('ets2-path')}\\bin\\win_x86\\eurotrucks2.exe`);
+    }
+
+    event.returnValue = true;
+})
+
+ipcMain.on('launch-truckersmp', (event) => {
+    launchGame(`${config.get('truckersmp-path')}\\launcher.exe`);
+
+    event.returnValue = true;
+})
+
+ipcMain.on('launch-ats', (event) => {
+    if (process.arch === 'x64') {
+        launchGame(`${config.get('ats-path')}\\bin\\win_x64\\amtrucks.exe`);
+    } else {
+        launchGame(`${config.get('ats-path')}\\bin\\win_x86\\amtrucks.exe`);
+    }
+
+    event.returnValue = true;
+})
+
+function launchGame(executablePath) {
+    spawn(executablePath, {detached: true});
 }
