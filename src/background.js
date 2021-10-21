@@ -20,6 +20,7 @@ const TelemetryManager = require('./managers/TelemetryManager')
 const InstallationManager = require('./managers/InstallationManager')
 const installationManager = new InstallationManager()
 const AutoLaunch = require('auto-launch');
+const log = require('electron-log');
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
 import {autoUpdater} from 'electron-updater';
@@ -57,7 +58,9 @@ function createWindow() {
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
 
-        autoUpdater.checkForUpdatesAndNotify()
+        autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+            log.error('checkForUpdatesAndNotify error: ' + error)
+        })
     }
 
     // Create the application menu
@@ -170,6 +173,7 @@ app.on('ready', async () => {
             await installExtension(VUEJS3_DEVTOOLS)
         } catch (e) {
             console.error('Vue Devtools failed to install:', e.toString())
+            log.error('Vue Devtools failed to install: ' + e.toString())
         }
     }
 
@@ -290,13 +294,16 @@ ipcMain.on('toggle-start-on-boot', (event) => {
         .then(function (isEnabled) {
             if (isEnabled) {
                 autoLauncher.disable();
+                log.info('Start on boot disabled');
 
                 return;
             }
             autoLauncher.enable();
+            log.info('Start on boot enabled');
         })
         .catch(function (err) {
             console.log(err)
+            log.error(err)
         });
 
     event.returnValue = true;
