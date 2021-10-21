@@ -8,6 +8,7 @@ import {
     MenuItem,
     ipcMain,
     shell,
+    dialog,
 } from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
@@ -130,7 +131,13 @@ function createApplicationMenu() {
                             }
                         }
                     ]
-                }
+                },
+                {
+                    label: 'Logout',
+                    click() {
+                        logout();
+                    }
+                },
             ]
         }
     ))
@@ -157,6 +164,27 @@ function createApplicationMenu() {
     ))
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+}
+
+function logout() {
+    dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        title: 'Logout',
+        message: 'Are you sure that you want to log out?',
+        buttons: ['Yes', 'No'],
+        defaultId: 1,
+    }).then(res => {
+        // Return if 2nd button was clicked
+        if (res.response === 1) {
+            return;
+        }
+
+        config.delete('tracker-token');
+        config.delete('user');
+
+        app.relaunch();
+        app.exit();
+    });
 }
 
 app.whenReady().then(() => {
