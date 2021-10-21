@@ -1,6 +1,7 @@
 const config = require('electron-cfg');
 const Downloader = require('nodejs-file-downloader');
 const {app, dialog} = require('electron');
+const log = require('electron-log');
 
 class InstallationManager {
     constructor() {
@@ -21,6 +22,8 @@ class InstallationManager {
             return;
         }
 
+        log.info('Installation manager started');
+
         // Ask the user if they want to start the setup
         const startSetup = await dialog.showMessageBox(mainWindow, {
             type: 'question',
@@ -33,6 +36,8 @@ class InstallationManager {
         // Return if they don't
         if (startSetup.response === 1) {
             config.set('installation-completed', true);
+
+            log.verbose('User cancelled installation');
 
             return;
         }
@@ -51,6 +56,8 @@ class InstallationManager {
                 message: 'Please manually specify the installation directory via the top menu.',
             })
 
+            log.warn('TruckersMP path could not be found in registry.');
+
             return;
         }
 
@@ -67,6 +74,8 @@ class InstallationManager {
 
             // Install the telemetry for ETS
             await this.installTelemetry(ets2Path)
+        } else {
+            log.warn('ETS2 path could not be found in registry.');
         }
 
         // ATS
@@ -80,6 +89,8 @@ class InstallationManager {
 
             // Install the telemetry for ATS
             await this.installTelemetry(atsPath)
+        } else {
+            log.warn('ATS path could not be found in registry.');
         }
 
         dialog.showMessageBox(mainWindow, {
@@ -87,6 +98,8 @@ class InstallationManager {
             title: 'Success!',
             message: `Telemetry successfully installed for ${installedGames.join(' and ')}!`,
         })
+
+        log.info(`Telemetry installed for ${installedGames.join(', ')}`);
 
         config.set('installation-completed', true);
     }
@@ -99,12 +112,14 @@ class InstallationManager {
             buttons: ['Yes', 'No'],
             defaultId: 1,
         }).then(res => {
-            // Set the ATS directory to null if the 2nd button was clicked
+            // Return if 2nd button was clicked
             if (res.response === 1) {
                 return;
             }
 
             config.delete('installation-completed');
+
+            log.info('Installation status reset by user.');
 
             dialog.showMessageBox(mainWindow, {
                 type: 'info',
@@ -140,6 +155,8 @@ class InstallationManager {
 
                     let path = res.filePaths[0];
                     config.set('truckersmp-path', path)
+
+                    log.info('TruckersMP path manually changed by user.');
 
                     dialog.showMessageBox(mainWindow, {
                         type: 'info',
@@ -177,6 +194,8 @@ class InstallationManager {
 
                     await this.installTelemetry(path)
 
+                    log.info('ETS2 path manually changed by user.');
+
                     dialog.showMessageBox(mainWindow, {
                         type: 'info',
                         title: 'Success!',
@@ -212,6 +231,8 @@ class InstallationManager {
                     config.set('ats-path', path)
 
                     await this.installTelemetry(path)
+
+                    log.info('ATS path manually changed by user.');
 
                     dialog.showMessageBox(mainWindow, {
                         type: 'info',
