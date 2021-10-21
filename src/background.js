@@ -22,6 +22,7 @@ const installationManager = new InstallationManager()
 const AutoLaunch = require('auto-launch');
 const log = require('electron-log');
 const BGLog = log.scope('background');
+const fs = require('fs');
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
 import {autoUpdater} from 'electron-updater';
@@ -64,6 +65,9 @@ function createWindow() {
         })
     }
 
+    // Remove the old log file
+    removeLogFile();
+
     // Create the application menu
     createApplicationMenu();
 
@@ -77,6 +81,16 @@ function createWindow() {
     });
 
     return win;
+}
+
+function removeLogFile() {
+    try {
+        const path = log.transports.file.getFile().path;
+
+        fs.unlinkSync(path);
+    } catch(err) {
+        BGLog.error(err);
+    }
 }
 
 function createApplicationMenu() {
