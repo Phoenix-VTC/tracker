@@ -1,8 +1,8 @@
 const tst = require('trucksim-telemetry')
-
 const config = require('electron-cfg')
-
 const axios = require('axios').default
+const log = require('electron-log');
+const TMLog = log.scope('telemetry-manager');
 
 const endpointUrl = getApiEndpointUrl()
 
@@ -13,6 +13,8 @@ class TelemetryManager {
 
     init() {
         this.telemetry.job.on('started', function () {
+            TMLog.verbose('Job started');
+
             sendData()
         })
 
@@ -21,14 +23,20 @@ class TelemetryManager {
         })
 
         this.telemetry.job.on('delivered', function () {
+            TMLog.verbose('Job delivered');
+
             sendData()
         })
 
         this.telemetry.job.on('finished', function () {
+            TMLog.verbose('Job finished');
+
             sendData()
         })
 
         this.telemetry.job.on('cancelled', function () {
+            TMLog.verbose('Job cancelled');
+
             sendData()
         })
 
@@ -36,6 +44,8 @@ class TelemetryManager {
         this.telemetry.watch()
 
         function sendData() {
+            TMLog.verbose('Sending telemetry data to Base');
+
             const data = tst.getData()
 
             axios.post(`${endpointUrl}/tracker`, JSON.stringify(data), {
@@ -43,7 +53,7 @@ class TelemetryManager {
                     'Authorization': `Bearer ${config.get('tracker-token')}`
                 }
             }).catch(function (error) {
-                console.log(error)
+                TMLog.error(error)
             })
         }
     }

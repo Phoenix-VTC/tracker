@@ -1,15 +1,10 @@
 const clientId = '823583866702921739'
 const DiscordRPC = require('discord-rpc')
-
-const tst = require("trucksim-telemetry")
-
+const tst = require('trucksim-telemetry')
 const config = require('electron-cfg')
 const configFile = require('../config')
-
 const util = require('util');
-
 const fetch = require('electron-fetch').default
-
 const log = require('electron-log');
 const RPMLog = log.scope('rich-presence-manager');
 
