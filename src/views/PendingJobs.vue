@@ -68,7 +68,13 @@
                       </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a :href="`${phoenixBaseUrl}/jobs/${job.id}/verify`" target="_blank" class="text-indigo-600 hover:text-indigo-900">Verify</a>
+                      <a :href="`${phoenixBaseUrl}/jobs/${job.id}/verify`" target="_blank"
+                         class="text-indigo-600 hover:text-indigo-900" v-if="job.status === 0">Verify</a>
+
+                      <span
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800" v-if="job.status === 1">
+                        Pending Verification
+                      </span>
                     </td>
                   </tr>
                   </tbody>
@@ -167,7 +173,7 @@ export default {
     }.bind(this), 15000);
   },
 
-  beforeUnmount: function(){
+  beforeUnmount: function () {
     clearInterval(this.interval);
   }
 }
