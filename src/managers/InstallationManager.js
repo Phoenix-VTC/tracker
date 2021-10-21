@@ -44,6 +44,16 @@ class InstallationManager {
         // Get and save the TruckersMP path
         const truckersMpData = await regedit.promisified.list('HKLM\\SOFTWARE\\TruckersMP')
         const truckersMpPath = truckersMpData['HKLM\\SOFTWARE\\TruckersMP']['values']['InstallDir']['value'];
+
+        if (typeof truckersMpPath === 'undefined') {
+            dialog.showErrorBox(mainWindow, {
+                title: 'Could not find TruckersMP installation directory. Is it installed?',
+                message: 'Please manually specify the installation directory via the top menu.',
+            })
+
+            return;
+        }
+
         config.set('truckersmp-path', truckersMpPath)
 
         // ETS2
