@@ -21,6 +21,7 @@ const InstallationManager = require('./managers/InstallationManager')
 const installationManager = new InstallationManager()
 const AutoLaunch = require('auto-launch');
 const log = require('electron-log');
+const BGLog = log.scope('background');
 require('@electron/remote/main').initialize()
 import defaultMenu from 'electron-default-menu';
 import {autoUpdater} from 'electron-updater';
@@ -59,7 +60,7 @@ function createWindow() {
         win.loadURL('app://./index.html')
 
         autoUpdater.checkForUpdatesAndNotify().catch((error) => {
-            log.error('checkForUpdatesAndNotify error: ' + error)
+            BGLog.error('checkForUpdatesAndNotify error: ' + error)
         })
     }
 
@@ -173,7 +174,7 @@ app.on('ready', async () => {
             await installExtension(VUEJS3_DEVTOOLS)
         } catch (e) {
             console.error('Vue Devtools failed to install:', e.toString())
-            log.error('Vue Devtools failed to install: ' + e.toString())
+            BGLog.error('Vue Devtools failed to install: ' + e.toString())
         }
     }
 
@@ -294,16 +295,16 @@ ipcMain.on('toggle-start-on-boot', (event) => {
         .then(function (isEnabled) {
             if (isEnabled) {
                 autoLauncher.disable();
-                log.info('Start on boot disabled');
+                BGLog.info('Start on boot disabled');
 
                 return;
             }
             autoLauncher.enable();
-            log.info('Start on boot enabled');
+            BGLog.info('Start on boot enabled');
         })
         .catch(function (err) {
             console.log(err)
-            log.error(err)
+            BGLog.error(err)
         });
 
     event.returnValue = true;
