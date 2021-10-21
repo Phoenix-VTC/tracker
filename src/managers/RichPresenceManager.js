@@ -10,6 +10,9 @@ const util = require('util');
 
 const fetch = require('electron-fetch').default
 
+const log = require('electron-log');
+const RPMLog = log.scope('rich-presence-manager');
+
 class RichPresenceManager {
     constructor() {
         this.telemetry = tst();
@@ -30,10 +33,14 @@ class RichPresenceManager {
 
         // Return if the connected user doesn't have a TruckersMP ID
         if (typeof config.get('user').truckersmp_id === 'undefined') {
+            RPMLog.warn('Exiting, user does not have a TMP ID connected.');
+
             return;
         }
 
         this.telemetry.game.on('disconnected', function () {
+            RPMLog.verbose('Disconnected from game');
+
             instance.resetTelemetryData();
             instance.resetRPCClient();
         });
@@ -70,6 +77,8 @@ class RichPresenceManager {
         }
 
         function update(data) {
+            RPMLog.verbose('Updating');
+
             // Use a try / catch as sometimes the data isn't there when first connecting. Also because of JSON parsing
             try {
                 // Set apart the last data received
@@ -88,8 +97,7 @@ class RichPresenceManager {
                     }
                 }
             } catch (error) {
-                // TODO: Find better way to log errors
-                console.log(error);
+                RPMLog.error(error);
             }
         }
 
@@ -107,6 +115,8 @@ class RichPresenceManager {
     }
 
     resetTelemetryData() {
+        RPMLog.verbose('Resetting telemetry data');
+
         this.lastData = null;
         this.mpInfo = null;
         this.mpStatsInfo = null;
@@ -115,6 +125,8 @@ class RichPresenceManager {
 
     checkMpInfo() {
         const instance = this;
+
+        RPMLog.verbose('Checking multiplayer info');
 
         if (this.lastData != null) {
             const url = util.format('https://api.truckyapp.com/v2/map/onlineList?ids=%s', config.get('user').truckersmp_id);
@@ -154,8 +166,8 @@ class RichPresenceManager {
                 } else {
                     instance.mpInfo = null;
                     instance.TRUCKYERROR = true;
-                    // TODO: Find better way to log errors
-                    console.log('Trucky API is currently having issues - MP Checker has been stopped.');
+
+                    RPMLog.error('Trucky API is currently having issues - MP Checker has been stopped.');
                 }
             });
         }
@@ -163,6 +175,8 @@ class RichPresenceManager {
 
     checkLocationInfo() {
         const instance = this;
+
+        RPMLog.verbose('Checking location info');
 
         if (this.lastData.truck.position.X === 0) {
             instance.locationInfo = {
@@ -195,6 +209,8 @@ class RichPresenceManager {
 
     buildActivity(data) {
         let activity = {};
+
+        RPMLog.verbose('Building RPC activity');
 
         if (config.get('enable-discord-rpc', true) === false) {
             this.rpc.clearActivity();
@@ -304,6 +320,8 @@ class RichPresenceManager {
     }
 
     resetRPCClient() {
+        RPMLog.verbose('Resetting RPC');
+
         if (config.get('enable-game-not-running-discord-rpc', true) === false || config.get('user') === null) {
             this.rpc.clearActivity();
             return;
