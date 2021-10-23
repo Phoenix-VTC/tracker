@@ -56,7 +56,7 @@
                     </button>
                   </div>
                   <p class="mt-2 text-sm text-gray-500" id="token-description">
-                    Keep this token save like your password, and never share it.
+                    Keep this token safe like your password, and never share it.
                   </p>
                 </div>
               </div>
