@@ -208,9 +208,27 @@ function logout() {
     });
 }
 
-app.whenReady().then(() => {
-    mainWindow = createWindow();
-});
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory, additionalData) => {
+        // Print out data received from the second instance.
+        BGLog.log(additionalData)
+
+        // Someone tried to run a second instance, we should focus our window.
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore()
+            mainWindow.focus()
+        }
+    })
+
+    // Create myWindow, load the rest of the app, etc...
+    app.whenReady().then(() => {
+        mainWindow = createWindow()
+    })
+}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
