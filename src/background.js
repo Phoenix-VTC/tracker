@@ -9,25 +9,27 @@ import {
     ipcMain,
     shell,
     dialog,
-} from 'electron'
-import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
+} from 'electron';
+import {createProtocol} from 'vue-cli-plugin-electron-builder/lib';
+import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer';
+import defaultMenu from 'electron-default-menu';
+import {autoUpdater} from 'electron-updater';
+import {spawn} from 'child_process';
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
-const config = require('electron-cfg')
-const axios = require('axios').default
-const RichPresenceManager = require('./managers/RichPresenceManager')
-const TelemetryManager = require('./managers/TelemetryManager')
-const InstallationManager = require('./managers/InstallationManager')
-const installationManager = new InstallationManager()
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const config = require('electron-cfg');
+const axios = require('axios').default;
+const RichPresenceManager = require('./managers/RichPresenceManager');
+const TelemetryManager = require('./managers/TelemetryManager');
+const InstallationManager = require('./managers/InstallationManager');
+const installationManager = new InstallationManager();
 const AutoLaunch = require('auto-launch');
 const log = require('electron-log');
 const BGLog = log.scope('background');
 const fs = require('fs');
-require('@electron/remote/main').initialize()
-import defaultMenu from 'electron-default-menu';
-import {autoUpdater} from 'electron-updater';
-import {spawn} from 'child_process';
+const contextMenu = require('electron-context-menu');
+
+require('@electron/remote/main').initialize();
 
 let mainWindow
 
@@ -58,6 +60,14 @@ axios.interceptors.response.use((response) => response, (error) => {
 });
 
 function createWindow() {
+    contextMenu({
+        showLookUpSelection: false,
+        showSearchWithGoogle: false,
+        showCopyImage: false,
+        showCopyImageAddress: false,
+        showSaveImageAs: false,
+    });
+
     // Create the browser window.
     let win = new BrowserWindow({
         width: 1220,
