@@ -317,7 +317,7 @@ class RichPresenceManager {
     resetRPCClient() {
         RPMLog.verbose('Resetting RPC');
 
-        if (config.get('enable-game-not-running-discord-rpc', true) === false || config.get('user') === null) {
+        if (config.get('enable-game-not-running-discord-rpc', false) === false || config.get('user') === null) {
             this.rpc.clearActivity();
             return;
         }
