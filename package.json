@@ -36,6 +36,7 @@
     "core-js": "^3.6.5",
     "discord-rpc": "^4.0.1",
     "electron-cfg": "^1.2.6",
+    "electron-context-menu": "^3.1.1",
     "electron-default-menu": "^1.0.2",
     "electron-dl": "github:sindresorhus/electron-dl#main",
     "electron-fetch": "^1.7.4",
