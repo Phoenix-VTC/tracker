@@ -36,6 +36,27 @@ protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
 ])
 
+axios.interceptors.response.use((response) => response, (error) => {
+    if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        BGLog.error(error.response.data);
+        BGLog.error(error.response.status);
+        BGLog.error(error.response.headers);
+    } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        BGLog.error(error.request);
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        BGLog.error('Error', error.message);
+    }
+    BGLog.log(error.config);
+
+    throw error;
+});
+
 function createWindow() {
     // Create the browser window.
     let win = new BrowserWindow({
@@ -252,6 +273,8 @@ function updateUserData() {
             'Authorization': `Bearer ${token}`
         }
     }).catch(function () {
+        BGLog.info('updateUserData request returned an error, deleting used data.')
+
         // Delete the tracker token and user if the request contained an error
         config.delete('tracker-token')
         config.delete('user')

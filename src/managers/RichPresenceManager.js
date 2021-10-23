@@ -26,6 +26,12 @@ class RichPresenceManager {
     init() {
         const instance = this;
 
+        if (!config.get('user')) {
+            RPMLog.warn('Exiting, user is not signed in.');
+
+            return;
+        }
+
         // Return if the connected user doesn't have a TruckersMP ID
         if (typeof config.get('user').truckersmp_id === 'undefined') {
             RPMLog.warn('Exiting, user does not have a TMP ID connected.');

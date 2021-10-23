@@ -72,7 +72,8 @@
                          class="text-indigo-600 hover:text-indigo-900" v-if="job.status === 0">Verify</a>
 
                       <span
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800" v-if="job.status === 1">
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                          v-if="job.status === 1">
                         Pending Verification
                       </span>
                     </td>
