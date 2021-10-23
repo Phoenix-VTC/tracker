@@ -52,8 +52,6 @@ class TelemetryManager {
                 headers: {
                     'Authorization': `Bearer ${config.get('tracker-token')}`
                 }
-            }).catch(function (error) {
-                TMLog.error(error)
             })
         }
     }
