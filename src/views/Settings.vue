@@ -246,7 +246,7 @@ export default {
 
   setup() {
     const enableDiscordRpc = ref(config.get('enable-discord-rpc', true))
-    const enableGameNotRunningDiscordRpc = ref(config.get('enable-game-not-running-discord-rpc', true))
+    const enableGameNotRunningDiscordRpc = ref(config.get('enable-game-not-running-discord-rpc', false))
     const startOnBoot = ref(ipcRenderer.sendSync('starts-on-boot'))
 
     return {
