@@ -9,6 +9,7 @@ import {
     ipcMain,
     shell,
     dialog,
+    nativeTheme,
 } from 'electron';
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer';
@@ -82,6 +83,11 @@ function createWindow() {
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
         }
     })
+
+    // Change the window backgroundColor to dark based on system theme
+    if (nativeTheme.shouldUseDarkColors) {
+        win.setBackgroundColor('#252f3f');
+    }
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
