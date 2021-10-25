@@ -12,12 +12,10 @@
 
     <main class="-mt-32">
       <div class="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 space-y-6">
-        <section
-            style="background-image: url('https://tracker-resources.s3.fr-par.scw.cloud/header.png'); background-repeat: no-repeat; background-size: cover;"
-            class="rounded-lg">
+        <section>
           <div class="overflow-hidden shadow">
             <h2 class="sr-only" id="profile-overview-title">Profile Overview</h2>
-            <div class="p-6">
+            <div class="p-6 rounded-t-lg" style="background-image: url('https://i.imgur.com/rtILJeF.png'); background-repeat: no-repeat; background-size: cover;">
               <div class="sm:flex sm:items-center sm:justify-between">
                 <div class="sm:flex sm:space-x-5">
                   <div class="flex-shrink-0">
