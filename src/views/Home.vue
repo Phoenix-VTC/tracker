@@ -15,7 +15,8 @@
         <section>
           <div class="overflow-hidden shadow">
             <h2 class="sr-only" id="profile-overview-title">Profile Overview</h2>
-            <div class="p-6 rounded-t-lg" style="background-image: url('https://i.imgur.com/rtILJeF.png'); background-repeat: no-repeat; background-size: cover;">
+            <div class="p-6 rounded-t-lg"
+                 style="background-image: url('https://i.imgur.com/rtILJeF.png'); background-repeat: no-repeat; background-size: cover;">
               <div class="sm:flex sm:items-center sm:justify-between">
                 <div class="sm:flex sm:space-x-5">
                   <div class="flex-shrink-0">
@@ -56,17 +57,20 @@
               </div>
             </div>
             <div
-                class="border-t border-gray-200 grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-y-0 sm:divide-x bg-white rounded-b-lg">
-              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100"
+                class="border-t border-gray-200 dark:border-gray-800 grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-800 sm:grid-cols-3 sm:divide-y-0 sm:divide-x bg-white dark:bg-gray-900 rounded-b-lg">
+              <button type="button"
+                      class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded-bl-lg"
                       v-on:click="launchEts2">
                 <span class="text-orange-600">Launch Euro Truck Simulator 2</span>
               </button>
-              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100"
+              <button type="button"
+                      class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100 dark:hover:bg-gray-700"
                       v-on:click="launchTruckersmp">
                 <span class="text-orange-600">Launch TruckersMP</span>
               </button>
 
-              <button type="button" class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100"
+              <button type="button"
+                      class="px-6 py-5 text-sm font-medium text-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded-br-lg"
                       v-on:click="launchAts">
                 <span class="text-orange-600">Launch American Truck Simulator</span>
               </button>
@@ -79,9 +83,10 @@
 
           <div>
             <section aria-labelledby="online-users-title" v-if="onlineUsers.length">
-              <div class="rounded-lg bg-white overflow-hidden shadow">
+              <div class="rounded-lg bg-white dark:bg-gray-900 overflow-hidden shadow">
                 <div class="p-6">
-                  <h2 class="text-lg font-medium text-gray-900" id="online-users-title">Online Users</h2>
+                  <h2 class="text-lg font-medium text-gray-900 dark:text-white" id="online-users-title">Online
+                    Users</h2>
                   <div class="flow-root mt-6">
                     <ul role="list" class="-my-5 divide-y divide-gray-200" v-for="user in onlineUsers"
                         v-bind:key="user">
@@ -92,16 +97,16 @@
                                  :alt="user.username + '\'s profile picture'">
                           </div>
                           <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 truncate">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {{ user.username }}
                             </p>
-                            <p class="text-sm text-gray-500 truncate" v-if="user.near">
+                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate" v-if="user.near">
                               Near {{ user.near }}
                             </p>
                           </div>
                           <div>
                             <a :href="`${phoenixBaseUrl}/users/${user.id}`" target="_blank"
-                               class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
+                               class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700">
                               View Profile
                             </a>
                           </div>
