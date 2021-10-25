@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-full">
+  <div class="flex flex-row h-full bg-white dark:bg-gray-800">
     <!-- Sidebar -->
     <nav class="bg-gray-900 w-20 justify-between flex flex-col">
       <div class="mt-10 mb-10">
@@ -40,7 +40,7 @@
         </router-link>
       </div>
     </nav>
-    <div class="text-gray-700 bg-gray-100 h-screen w-screen">
+    <div class="text-gray-700 bg-gray-100 dark:bg-gray-800 h-screen w-screen">
 
       <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4" v-if="Object.keys(this.user).length === 0">
         <div class="flex">
