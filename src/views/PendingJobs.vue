@@ -41,7 +41,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr :class="{'bg-white': job.id % 2 === 0, 'bg-gray-50': job.id % 2 !== 0 }" v-for="job in jobs"
+                  <tr :class="{'bg-white': index % 2 === 0, 'bg-gray-50': index % 2 !== 0 }" v-for="(job, index) in jobs"
                       :key="job.id">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span v-if="job.game_id === 1">
