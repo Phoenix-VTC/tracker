@@ -16,7 +16,7 @@
           <div class="overflow-hidden shadow">
             <h2 class="sr-only" id="profile-overview-title">Profile Overview</h2>
             <div class="p-6 rounded-t-lg"
-                 style="background-image: url('https://i.imgur.com/rtILJeF.png'); background-repeat: no-repeat; background-size: cover;">
+                 style="background-image: url('https://tracker-resources.s3.fr-par.scw.cloud/header.png'); background-repeat: no-repeat; background-size: cover;">
               <div class="sm:flex sm:items-center sm:justify-between">
                 <div class="sm:flex sm:space-x-5">
                   <div class="flex-shrink-0">
@@ -40,14 +40,14 @@
 
                       <span v-else>Playing {{ convertGameIdToFullName(game.game.id) }}</span>
                     </div>
-                    <div class="font-medium text-gray-600">
+                    <div class="font-medium text-gray-800">
                       <span v-if="!game?.sdkActive">Ready to play</span>
 
-                      <div class="font-normal" v-else>
+                      <div v-else>
                         <span v-if="job.source.city.name && job.destination.city.name">
-                          Carrying <span class="font-medium">{{ job.cargo.name }}</span> from <span class="font-medium">{{
+                          Carrying <span class="font-bold">{{ job.cargo.name }}</span> from <span class="font-bold">{{
                             job.source.city.name
-                          }}</span> to <span class="font-medium">{{ job.destination.city.name }}</span>
+                          }}</span> to <span class="font-bold">{{ job.destination.city.name }}</span>
                         </span>
                         <span v-else>Freeroaming</span>
                       </div>
