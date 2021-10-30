@@ -37,7 +37,7 @@
             <settings-section title="Account" description="Update your account settings, including tracker token here.">
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="token" class="block text-sm font-medium text-gray-700">Tracker token</label>
+                  <label for="token" class="block text-sm font-medium text-gray-700 dark:text-white">Tracker token</label>
                   <div class="mt-1 flex rounded-md shadow-sm">
                     <div class="relative flex items-stretch flex-grow focus-within:z-10">
                       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -55,7 +55,7 @@
                       <span v-else>Hide</span>
                     </button>
                   </div>
-                  <p class="mt-2 text-sm text-gray-500" id="token-description">
+                  <p class="mt-2 text-sm text-gray-500 dark:text-gray-400" id="token-description">
                     Keep this token safe like your password, and never share it.
                   </p>
                 </div>
@@ -67,8 +67,8 @@
                 <div class="col-span-3 sm:col-span-3">
                   <div class="flex items-center justify-between">
                     <span class="flex-grow flex flex-col">
-                      <span class="text-sm font-medium text-gray-900" id="enable-discord-rpc-label">Enable Discord Rich Presence</span>
-                      <span class="text-sm text-gray-500" id="enable-discord-rpc-description">The "Playing Phoenix Tracker" status message.</span>
+                      <span class="text-sm font-medium text-gray-900 dark:text-white" id="enable-discord-rpc-label">Enable Discord Rich Presence</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400" id="enable-discord-rpc-description">The "Playing Phoenix Tracker" status message.</span>
                     </span>
                     <Switch v-model="enableDiscordRpc"
                             :class="[enableDiscordRpc ? 'bg-orange-600' : 'bg-gray-200', 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500']">
@@ -100,8 +100,8 @@
                 <div class="col-span-3 sm:col-span-3" v-if="enableDiscordRpc">
                   <div class="flex items-center justify-between">
                     <span class="flex-grow flex flex-col">
-                      <span class="text-sm font-medium text-gray-900" id="show-game-not-running-rpc-label">Show Discord RPC when game is not running</span>
-                      <span class="text-sm text-gray-500" id="show-game-not-running-rpc-description">The "Game not running" status message.</span>
+                      <span class="text-sm font-medium text-gray-900 dark:text-white" id="show-game-not-running-rpc-label">Show Discord RPC when game is not running</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400" id="show-game-not-running-rpc-description">The "Game not running" status message.</span>
                     </span>
                     <Switch v-model="enableGameNotRunningDiscordRpc"
                             :class="[enableGameNotRunningDiscordRpc ? 'bg-orange-600' : 'bg-gray-200', 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500']">
@@ -133,8 +133,8 @@
                 <div class="col-span-3 sm:col-span-3">
                   <div class="flex items-center justify-between">
                     <span class="flex-grow flex flex-col">
-                      <span class="text-sm font-medium text-gray-900" id="start-on-boot-label">Start on boot</span>
-                      <span class="text-sm text-gray-500" id="start-on-boot-description">Automatically open the Phoenix Tracker when Windows starts.</span>
+                      <span class="text-sm font-medium text-gray-900 dark:text-white" id="start-on-boot-label">Start on boot</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400" id="start-on-boot-description">Automatically open the Phoenix Tracker when Windows starts.</span>
                     </span>
                     <Switch v-model="startOnBoot"
                             :class="[startOnBoot ? 'bg-orange-600' : 'bg-gray-200', 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500']">
@@ -169,14 +169,14 @@
                               description="Don't touch this unless you know what you're doing.">
               <fieldset>
                 <div>
-                  <legend class="text-base font-medium text-gray-900">API Endpoint</legend>
-                  <p class="text-sm text-gray-500">Where the tracker data will be requested from/sent to.</p>
+                  <legend class="text-base font-medium text-gray-900 dark:text-white">API Endpoint</legend>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Where the tracker data will be requested from/sent to.</p>
                 </div>
                 <div class="mt-4 space-y-4">
                   <div class="flex items-center">
                     <input id="production" name="api-endpoint" type="radio" value="production" v-model="apiEndpoint"
                            class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
-                    <label for="production" class="ml-3 block text-sm font-medium text-gray-700">
+                    <label for="production" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Production
                     </label>
                   </div>
@@ -184,7 +184,7 @@
                   <div class="flex items-center">
                     <input id="staging" name="api-endpoint" type="radio" value="staging" v-model="apiEndpoint"
                            class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
-                    <label for="staging" class="ml-3 block text-sm font-medium text-gray-700">
+                    <label for="staging" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Staging
                     </label>
                   </div>
@@ -192,7 +192,7 @@
                   <div class="flex items-center">
                     <input id="local" name="api-endpoint" type="radio" value="local" v-model="apiEndpoint"
                            class="focus:ring-indigo-500 h-4 w-4 text-orange-600 border-gray-300">
-                    <label for="local" class="ml-3 block text-sm font-medium text-gray-700">
+                    <label for="local" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Local
                     </label>
                   </div>
