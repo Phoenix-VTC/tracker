@@ -73,7 +73,7 @@ function createWindow() {
     let win = new BrowserWindow({
         width: 1220,
         height: 780,
-        title: 'Phoenix Tracker',
+        title: `Phoenix Tracker v${app.getVersion()}`,
         icon: 'src/assets/icons/icon_256.ico',
         backgroundColor: '#161e2e',
         webPreferences: {
