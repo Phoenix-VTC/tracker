@@ -71,7 +71,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <a :href="`${phoenixBaseUrl}/jobs/${job.id}/verify`" target="_blank"
-                         class="text-indigo-600 hover:text-indigo-900 dark:hover:text-indigo-500" v-if="job.status === 0">Verify</a>
+                         class="text-orange-500 hover:text-orange-600" v-if="job.status === 0">Verify</a>
 
                       <span
                           class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 dark:bg-yellow-400 text-yellow-800 dark:text-yellow-900"
