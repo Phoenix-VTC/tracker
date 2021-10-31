@@ -17,10 +17,11 @@
               </router-link>
             </li>
 
-            <li>
+            <li class="relative">
               <router-link to="/pending-jobs" class="text-gray-300 hover:text-gray-100"
                            active-class="text-orange-500 hover:text-orange-500">
                 <TruckIcon class="h-6 w-6 mx-auto"/>
+                <span class="absolute top-0 right-0 block h-2.5 w-2.5 mr-3.5 -mt-2 rounded-full ring-2 ring-white bg-orange-600" v-if="pendingJobsCount >= 1"></span>
               </router-link>
             </li>
 
@@ -80,7 +81,22 @@ export default {
     return {
       errors: [],
       user: config.get('user', {}),
+      pendingJobsCount: 0,
     }
+  },
+
+  methods: {
+    loadData: function () {
+      this.pendingJobsCount = this.$pendingJobsCount;
+    }
+  },
+
+  mounted: function () {
+    this.loadData();
+
+    this.interval = setInterval(function () {
+      this.loadData();
+    }.bind(this), 15000);
   },
 }
 </script>
