@@ -7,6 +7,7 @@ import VueAxios from 'vue-axios'
 import {ipcRenderer} from 'electron'
 import config from 'electron-cfg';
 import log from 'electron-log';
+
 const AxiosLog = log.scope('vue-axios');
 
 const app = createApp(App)
@@ -50,12 +51,6 @@ setInterval(function () {
 }.bind(this), 15000);
 
 function updatePendingJobsCountBadge() {
-    if (config.get('enable-pending-jobs-taskbar-badge', true) === false) {
-        ipcRenderer.sendSync('update-badge', null)
-
-        return;
-    }
-
     const apiEndpointUrl = ipcRenderer.sendSync('get-api-endpoint-url')
     const token = config.get('tracker-token')
 
@@ -63,5 +58,13 @@ function updatePendingJobsCountBadge() {
         headers: {
             'Authorization': `Bearer ${token}`
         }
-    }).then(response => (ipcRenderer.sendSync('update-badge', response.data)))
+    }).then(response => {
+        app.config.globalProperties.$pendingJobsCount = response.data
+
+        if (config.get('enable-pending-jobs-taskbar-badge', true) === false) {
+            ipcRenderer.sendSync('update-badge', null)
+        } else {
+            ipcRenderer.sendSync('update-badge', response.data)
+        }
+    })
 }
