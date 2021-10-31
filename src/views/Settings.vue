@@ -162,6 +162,39 @@
                     </Switch>
                   </div>
                 </div>
+
+                <div class="col-span-3 sm:col-span-3">
+                  <div class="flex items-center justify-between">
+                    <span class="flex-grow flex flex-col">
+                      <span class="text-sm font-medium text-gray-900 dark:text-white" id="enable-pending-jobs-taskbar-badge-label">Enable pending jobs taskbar badge</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400" id="enable-pending-jobs-taskbar-badge-description">Show the amount of pending jobs in your taskbar.</span>
+                    </span>
+                    <Switch v-model="enablePendingJobsTaskbarBadge"
+                            :class="[enablePendingJobsTaskbarBadge ? 'bg-orange-600' : 'bg-gray-200', 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500']">
+                      <span class="sr-only">Use setting</span>
+                      <span
+                          :class="[enablePendingJobsTaskbarBadge ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200']">
+                        <span
+                            :class="[enablePendingJobsTaskbarBadge ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200', 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity']"
+                            aria-hidden="true">
+                          <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
+                            <path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                        <span
+                            :class="[enablePendingJobsTaskbarBadge ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100', 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity']"
+                            aria-hidden="true">
+                          <svg class="h-3 w-3 text-orange-600" fill="currentColor" viewBox="0 0 12 12">
+                            <path
+                                d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z"/>
+                          </svg>
+                        </span>
+                      </span>
+                    </Switch>
+                  </div>
+                </div>
               </div>
             </settings-section>
 
@@ -248,11 +281,13 @@ export default {
     const enableDiscordRpc = ref(config.get('enable-discord-rpc', true))
     const enableGameNotRunningDiscordRpc = ref(config.get('enable-game-not-running-discord-rpc', false))
     const startOnBoot = ref(ipcRenderer.sendSync('starts-on-boot'))
+    const enablePendingJobsTaskbarBadge = ref(config.get('enable-pending-jobs-taskbar-badge', true))
 
     return {
       enableDiscordRpc,
       enableGameNotRunningDiscordRpc,
       startOnBoot,
+      enablePendingJobsTaskbarBadge,
     }
   },
 
@@ -329,6 +364,14 @@ export default {
 
       if (this.enableGameNotRunningDiscordRpc !== config.get('enable-game-not-running-discord-rpc')) {
         config.set('enable-game-not-running-discord-rpc', this.enableGameNotRunningDiscordRpc);
+      }
+
+      if (this.enablePendingJobsTaskbarBadge !== config.get('enable-pending-jobs-taskbar-badge')) {
+        config.set('enable-pending-jobs-taskbar-badge', this.enablePendingJobsTaskbarBadge);
+      }
+
+      if (config.get('enable-pending-jobs-taskbar-badge', true) === false) {
+        ipcRenderer.sendSync('update-badge', null)
       }
     },
 

@@ -29,6 +29,7 @@ const log = require('electron-log');
 const BGLog = log.scope('background');
 const fs = require('fs');
 const contextMenu = require('electron-context-menu');
+const Badge = require('electron-windows-badge');
 
 require('@electron/remote/main').initialize();
 
@@ -83,6 +84,11 @@ function createWindow() {
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
         }
     })
+
+    const badgeOptions = {
+        color: '#DC2F02'
+    }
+    new Badge(win, badgeOptions);
 
     // Change the window backgroundColor to dark based on system theme
     if (nativeTheme.shouldUseDarkColors) {

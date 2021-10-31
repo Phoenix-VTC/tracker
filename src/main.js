@@ -42,3 +42,26 @@ router.beforeEach((to, from, next) => {
     if (to.name !== 'Settings' && !config.get('user')) next({name: 'Settings'})
     else next()
 })
+
+updatePendingJobsCountBadge();
+
+setInterval(function () {
+    updatePendingJobsCountBadge()
+}.bind(this), 15000);
+
+function updatePendingJobsCountBadge() {
+    if (config.get('enable-pending-jobs-taskbar-badge', true) === false) {
+        ipcRenderer.sendSync('update-badge', null)
+
+        return;
+    }
+
+    const apiEndpointUrl = ipcRenderer.sendSync('get-api-endpoint-url')
+    const token = config.get('tracker-token')
+
+    axios.get(`${apiEndpointUrl}/tracker/pending-jobs-count`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => (ipcRenderer.sendSync('update-badge', response.data)))
+}

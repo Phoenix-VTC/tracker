@@ -42,6 +42,7 @@
     "electron-fetch": "^1.7.4",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.3.9",
+    "electron-windows-badge": "^1.1.0",
     "node-ray": "^1.16.0",
     "nodejs-file-downloader": "^4.7.4",
     "postcss": "^7.0.36",
