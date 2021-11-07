@@ -79,7 +79,53 @@
         </section>
 
         <div class="grid grid-cols-3 gap-4">
-          <div class="col-span-2"></div>
+          <div class="col-span-2">
+
+            <div class="flex flex-col-reverse lg:flex-row w-full bg-white dark:bg-gray-900 shadow rounded"
+                 v-if="showNextEvent">
+              <div class="w-full lg:w-1/2">
+                <div aria-label="card" class="pt-4 pb-4 pl-6 pr-4">
+                  <div class="flex justify-between items-center lg:items-start flex-row-reverse lg:flex-col">
+                    <h4 class="text-gray-600 dark:text-gray-400 text-base font-normal">Next event</h4>
+                  </div>
+                  <a class="text-gray-800 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300"
+                     :href="nextEvent.url" target="_blank">
+                    <h2 class="mb-2 tracking-normal text-xl lg:text-2xl font-bold capitalize">
+                      {{ nextEvent.name }}
+                    </h2>
+                  </a>
+                  <p class="mb-6 font-normal text-gray-600 dark:text-gray-400 text-sm tracking-normal w-full" v-html="nextEvent.description"></p>
+                  <div class="flex lg:items-center items-start flex-col lg:flex-row">
+                    <div
+                        class="text-gray-600 dark:text-gray-400 focus:outline-none focus:text-indigo-700 flex items-end">
+                            <span class="mr-1">
+                                <CalendarIcon class="h-5"/>
+                          </span>
+                      <span class="text-sm tracking-normal font-normal text-center">
+                        {{ moment(nextEvent.start_date).format('LLL') }}
+                      </span>
+                    </div>
+                    <div
+                        class="text-gray-600 dark:text-gray-400 focus:outline-none focus:text-indigo-700 mt-4 lg:mt-0 ml-0 lg:ml-12 flex items-end">
+                      <span class="mr-1">
+                        <LocationMarkerIcon class="h-5"/>
+                      </span>
+                      <div class="text-sm tracking-normal font-normal text-center">
+                        <span v-if="nextEvent.game_id === 1">ETS2</span>
+                        <span v-else-if="nextEvent.game_id === 2">ATS</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                  class="relative w-full h-64 lg:h-auto lg:w-1/2 rounded-t lg:rounded-t-none lg:rounded-r inline-block">
+                <img class="w-full h-full absolute inset-0 object-cover rounded-t lg:rounded-r lg:rounded-t-none"
+                     :src="nextEvent.featured_image_url" :alt="nextEvent.name"/>
+              </div>
+            </div>
+
+          </div>
 
           <div>
             <section aria-labelledby="online-users-title" v-if="onlineUsers.length">
@@ -125,13 +171,20 @@
 </template>
 
 <script>
-import truckSimTelemetry from "trucksim-telemetry"
-import {ipcRenderer} from 'electron'
+import truckSimTelemetry from 'trucksim-telemetry';
+import {ipcRenderer} from 'electron';
+import {CalendarIcon, LocationMarkerIcon} from '@heroicons/vue/outline';
+import moment from 'moment';
 
 const config = require('electron-cfg');
 
 export default {
   name: 'Home',
+
+  components: {
+    CalendarIcon,
+    LocationMarkerIcon,
+  },
 
   data() {
     return {
@@ -147,7 +200,13 @@ export default {
       phoenixBaseUrl: this.$phoenixBaseUrl,
       onlineUsers: [],
       interval: null,
+      showNextEvent: false,
+      nextEvent: {},
     }
+  },
+
+  created: function () {
+    this.moment = moment;
   },
 
   computed: {
@@ -191,6 +250,21 @@ export default {
           'Authorization': `Bearer ${token}`
         }
       }).then(response => (this.onlineUsers = response.data))
+    },
+
+    loadNextEvent: function () {
+      const token = config.get('tracker-token')
+
+      this.axios.get(`${this.$apiEndpointUrl}/tracker/events/next`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.nextEvent = response.data;
+          this.showNextEvent = true;
+        }
+      })
     }
   },
 
@@ -198,6 +272,7 @@ export default {
     this.telemetry.watch({interval: 10000}, this.update);
 
     this.loadOnlineUsers();
+    this.loadNextEvent();
 
     this.interval = setInterval(function () {
       this.loadOnlineUsers();
