@@ -147,6 +147,29 @@ function createApplicationMenu() {
             label: 'Settings',
             submenu: [
                 {
+                    label: 'Theme',
+                    submenu: [
+                        {
+                            label: 'Dark Mode',
+                            click() {
+                                nativeTheme.themeSource = 'dark';
+                            }
+                        },
+                        {
+                            label: 'Light Mode',
+                            click() {
+                                nativeTheme.themeSource = 'light';
+                            }
+                        },
+                        {
+                            label: 'System',
+                            click() {
+                                nativeTheme.themeSource = 'system';
+                            }
+                        }
+                    ]
+                },
+                {
                     label: 'Reset installation status',
                     click() {
                         installationManager.resetInstallationStatus(mainWindow);
