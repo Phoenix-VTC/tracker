@@ -41,7 +41,7 @@
         </router-link>
       </div>
     </nav>
-    <div class="text-gray-700 bg-gray-100 dark:bg-gray-800 h-screen w-screen">
+    <div class="text-gray-700 bg-gray-100 dark:bg-gray-800 h-full w-full">
 
       <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4" v-if="Object.keys(this.user).length === 0">
         <div class="flex">
