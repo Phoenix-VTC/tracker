@@ -4,7 +4,7 @@ const tst = require('trucksim-telemetry')
 const config = require('electron-cfg')
 const configFile = require('../config')
 const util = require('util');
-const fetch = require('electron-fetch').default
+const axios = require('axios').default;
 const log = require('electron-log');
 const RPMLog = log.scope('rich-presence-manager');
 
@@ -130,14 +130,13 @@ class RichPresenceManager {
         RPMLog.verbose('Checking multiplayer info');
 
         if (this.lastData != null) {
-            const url = util.format('https://api.truckyapp.com/v2/map/onlineList?ids=%s', config.get('user').truckersmp_id);
-
-            fetch(url).then((body) => {
-                return body.json()
-            }).then((json) => {
-                if (!json.error) {
-                    const response = json.response;
-
+            axios.get('https://api.truckyapp.com/v2/map/onlineList', {
+                params: {
+                    ids: config.get('user').truckersmp_id
+                }
+            })
+                .then(function (response) {
+                    response = response.data.response;
                     if (response.players[0].online) {
                         instance.mpInfo = {
                             online: true,
@@ -164,13 +163,14 @@ class RichPresenceManager {
                         };
                         instance.TRUCKYERROR = false;
                     }
-                } else {
+                })
+                .catch(function (error) {
                     instance.mpInfo = null;
                     instance.TRUCKYERROR = true;
 
                     RPMLog.error('Trucky API is currently having issues - MP Checker has been stopped.');
-                }
-            });
+                    RPMLog.error(error);
+                });
         }
     }
 
@@ -185,14 +185,15 @@ class RichPresenceManager {
                 inCity: null,
             };
         } else {
-            const url = util.format('https://api.truckyapp.com/v2/map/%s/resolve?x=%s&y=%s', this.lastData.game.game.name, this.lastData.truck.position.X, this.lastData.truck.position.Z);
-
-            fetch(url).then((body) => {
-                return body.json()
-            }).then((json) => {
-
-                if (!json.error) {
-                    const response = json.response;
+            axios.get(`https://api.truckyapp.com/v2/map/${this.lastData.game.game.name}/resolve`, {
+                params: {
+                    x: this.lastData.truck.position.X,
+                    z: this.lastData.truck.position.Z
+                }
+            }).then((response) => {
+                response = response.data;
+                if (!response.error) {
+                    const response = response.response;
 
                     instance.locationInfo = {
                         location: response.poi.realName,
