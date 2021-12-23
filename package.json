@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/Phoenix-VTC/tracker.git"
   },
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
