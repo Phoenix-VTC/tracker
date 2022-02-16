@@ -130,24 +130,27 @@ class RichPresenceManager {
         RPMLog.verbose('Checking multiplayer info');
 
         if (this.lastData != null) {
-            axios.get('https://api.truckyapp.com/v2/map/onlineList', {
+            axios.get(`${getBaseUrl()}/api/tracker/resolve-truckersmp-player-data`, {
+                headers: {
+                    'Authorization': `Bearer ${config.get('tracker-token')}`
+                },
                 params: {
                     ids: config.get('user').truckersmp_id
                 }
             })
                 .then(function (response) {
-                    response = response.data.response;
-                    if (response.players[0].online) {
+                    response = response.data;
+                    if (response.error === false) {
                         instance.mpInfo = {
                             online: true,
-                            server: response.players[0].serverDetails,
-                            apiserverid: response.players[0].serverDetails.apiserverid,
-                            playerid: response.players[0].p_id,
-                            mod: response.players[0].serverDetails.mod
+                            server: response.server,
+                            apiserverid: response.server.id,
+                            playerid: response.data.player_id,
+                            mod: response.server.mod
                         };
                         instance.locationInfo = {
-                            location: response.players[0].location.poi.realName,
-                            inCity: response.players[0].location.area
+                            location: response.near.city,
+                            inCity: false // TODO: Deprecated, remove this
                         }
                     } else {
                         instance.mpInfo = {
@@ -162,6 +165,8 @@ class RichPresenceManager {
                             inCity: false
                         };
                         instance.TRUCKYERROR = false;
+
+                        instance.checkLocationInfo();
                     }
                 })
                 .catch(function (error) {
@@ -185,19 +190,21 @@ class RichPresenceManager {
                 inCity: null,
             };
         } else {
-            axios.get(`https://api.truckyapp.com/v2/map/${this.lastData.game.game.name}/resolve`, {
+            axios.get(`${getBaseUrl()}/api/tracker/resolve-location`, {
+                headers: {
+                    'Authorization': `Bearer ${config.get('tracker-token')}`
+                },
                 params: {
+                    game: this.lastData.game.game.name,
                     x: this.lastData.truck.position.X,
-                    z: this.lastData.truck.position.Z
+                    y: this.lastData.truck.position.Z
                 }
             }).then((response) => {
                 response = response.data;
-                if (!response.error) {
-                    const response = response.response;
-
+                if (response.error === false) {
                     instance.locationInfo = {
-                        location: response.poi.realName,
-                        inCity: response.area,
+                        location: response.near.city,
+                        inCity: false, // TODO: Deprecated, remove this
                     };
                 } else {
                     instance.locationInfo = {
