@@ -46,7 +46,7 @@
     "moment": "^2.29.1",
     "node-ray": "^1.16.0",
     "nodejs-file-downloader": "^4.7.4",
-    "postcss": "^7.0.36",
+    "postcss": "^8.2.13",
     "regedit": "^5.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.4",
     "trucksim-telemetry": "^0.16.0",
